@@ -7,6 +7,7 @@ import '@material/web/icon/icon.js';
 @customElement('crd-navbar')
 export class CrdNavbar extends LitElement {
   private static readonly homeUrl = import.meta.env.BASE_URL;
+  private static readonly repoUrl = 'https://github.com/Yar1991-Translation/CRD';
 
   static styles = css`
     :host {
@@ -65,7 +66,7 @@ export class CrdNavbar extends LitElement {
           CRD.
         </a>
         <div class="actions">
-          <md-icon-button aria-label="GitHub" href="https://github.com" target="_blank">
+          <md-icon-button aria-label="GitHub" href=${CrdNavbar.repoUrl} target="_blank">
             <md-icon>code</md-icon>
           </md-icon-button>
         </div>
