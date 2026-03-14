@@ -27,8 +27,13 @@
 body {
   background-color: var(--md-sys-color-background);
   color: var(--md-sys-color-on-background);
+  overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: color-mix(in srgb, var(--md-sys-color-on-background) 30%, transparent) transparent;
+}
+
+html {
+  overflow-x: hidden;
 }
 
 /* 针对非 Shadow DOM 的全局滚动条 (Webkit) */

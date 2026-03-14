@@ -30,6 +30,8 @@ export class CrdDisclaimer extends LitElement {
       --md-dialog-container-color: var(--md-sys-color-surface-container-high, var(--md-sys-color-surface));
       --md-dialog-headline-color: var(--md-sys-color-on-surface);
       --md-dialog-supporting-text-color: var(--md-sys-color-on-surface-variant);
+      width: min(680px, 92vw);
+      max-width: 92vw;
       
       /* 现代浏览器原生滚动条属性 (支持继承到 Shadow DOM 内部) */
       scrollbar-width: thin;
@@ -193,6 +195,15 @@ export class CrdDisclaimer extends LitElement {
       margin-top: -8px;
     }
 
+    .dialog-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
     .dialog-shell {
       display: flex;
       flex-direction: column;
@@ -324,14 +335,42 @@ export class CrdDisclaimer extends LitElement {
 
     @media (max-width: 640px) {
       .banner {
-        right: 16px;
+        left: 12px;
+        right: 12px;
         bottom: 16px;
-        width: min(100vw - 20px, 360px);
+        width: auto;
+        max-width: none;
         border-radius: 18px;
+      }
+
+      .dialog-shell {
+        gap: 14px;
       }
 
       .dialog-hero {
         padding: 12px 14px;
+      }
+
+      .dialog-item {
+        grid-template-columns: 24px 1fr;
+        gap: 10px;
+        padding: 10px 12px;
+      }
+
+      .dialog-index {
+        width: 24px;
+        height: 24px;
+        font-size: 0.76rem;
+      }
+
+      .dialog-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .dialog-actions md-text-button,
+      .dialog-actions md-filled-button {
+        width: 100%;
       }
     }
   `;
@@ -441,7 +480,7 @@ export class CrdDisclaimer extends LitElement {
               </div>
             </div>
           </div>
-          <div slot="actions">
+          <div slot="actions" class="dialog-actions">
             ${this.dialogStrict ? html`
               <md-text-button @click=${this.handleDisagree}>不同意并离开</md-text-button>
             ` : html`

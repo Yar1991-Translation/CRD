@@ -27,6 +27,15 @@ export class CrdFooter extends LitElement {
       opacity: 0.8;
       max-width: 800px;
       margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px 16px;
+      flex-wrap: wrap;
     }
     
     a {
@@ -36,6 +45,26 @@ export class CrdFooter extends LitElement {
     
     a:hover {
       text-decoration: underline;
+    }
+
+    @media (max-width: 640px) {
+      :host {
+        padding: 24px 16px;
+      }
+
+      .footer-container {
+        gap: 12px;
+        font-size: 0.82rem;
+      }
+
+      .disclaimer {
+        font-size: 0.72rem;
+      }
+
+      .footer-links {
+        flex-direction: column;
+        gap: 8px;
+      }
     }
   `;
 
@@ -50,8 +79,8 @@ export class CrdFooter extends LitElement {
           "Roblox" 及相关商标、Logo 均属于 Roblox Corporation 所有。
           下载的文件均直接来源于官方服务器，本站不承担由于使用客户端产生的任何连带责任。
         </div>
-        <div>
-          <a href="https://github.com" target="_blank">获取源码</a> |
+        <div class="footer-links">
+          <a href="https://github.com" target="_blank">获取源码</a>
           <a href="#">问题反馈</a>
         </div>
       </div>

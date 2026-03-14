@@ -23,6 +23,7 @@ export class CrdNavbar extends LitElement {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 12px;
       padding: 12px 24px;
       max-width: 1200px;
       margin: 0 auto;
@@ -33,9 +34,10 @@ export class CrdNavbar extends LitElement {
       align-items: center;
       gap: 12px;
       font-weight: 700;
-      font-size: 1.25rem;
+      font-size: clamp(1.05rem, 2.8vw, 1.25rem);
       color: var(--md-sys-color-primary);
       text-decoration: none;
+      white-space: nowrap;
     }
     
     .brand img {
@@ -47,6 +49,12 @@ export class CrdNavbar extends LitElement {
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+
+    @media (max-width: 640px) {
+      header {
+        padding: 10px 16px;
+      }
     }
   `;
 
