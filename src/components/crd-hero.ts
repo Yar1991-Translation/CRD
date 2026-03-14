@@ -4,7 +4,10 @@ import { customElement, state, query } from 'lit/decorators.js';
 import '@material/web/button/filled-button.js';
 import '@material/web/button/filled-tonal-button.js';
 import '@material/web/button/outlined-button.js';
+import '@material/web/button/text-button.js';
+import '@material/web/dialog/dialog.js';
 import '@material/web/icon/icon.js';
+import '@material/web/iconbutton/icon-button.js';
 import '@material/web/tabs/tabs.js';
 import '@material/web/tabs/primary-tab.js';
 import '@material/web/tabs/secondary-tab.js';
@@ -12,15 +15,60 @@ import '@material/web/progress/circular-progress.js';
 
 import type { CrdRddDialog } from './crd-rdd-dialog.js';
 
+type GhProxyOptionId = 'auto' | 'cf' | 'hk' | 'cdn' | 'eo';
+type GhProxyManualOptionId = Exclude<GhProxyOptionId, 'auto'>;
+type GhProxyOption = {
+  id: GhProxyOptionId;
+  label: string;
+  domain?: string;
+  description: string;
+};
+
 @customElement('crd-hero')
 export class CrdHero extends LitElement {
   private static readonly baseUrl = import.meta.env.BASE_URL;
 
-  private static readonly androidApkUrl =
-    'https://hk.gh-proxy.org/https://github.com/Yar1991-Translation/CRD-APK/releases/latest/download/roblox.apk';
+  private static readonly ghProxyStorageKey = 'crd-gh-proxy-selection';
 
-  private static readonly androidZapkUrl =
-    'https://hk.gh-proxy.org/https://github.com/Yar1991-Translation/CRD-APK/releases/latest/download/roblox.zapk';
+  private static readonly ghProxyAutoRefreshMs = 10 * 60 * 1000;
+
+  private static readonly ghProxyOptions: GhProxyOption[] = [
+    {
+      id: 'auto',
+      label: '自动选择',
+      description: '自动测速并选择当前最快可用节点',
+    },
+    {
+      id: 'cf',
+      label: 'Cloudflare',
+      domain: 'gh-proxy.org',
+      description: '官方 cloudflare 线路',
+    },
+    {
+      id: 'hk',
+      label: '香港',
+      domain: 'hk.gh-proxy.org',
+      description: '官方香港线路',
+    },
+    {
+      id: 'cdn',
+      label: 'Fastly',
+      domain: 'cdn.gh-proxy.org',
+      description: '官方 Fastly 线路',
+    },
+    {
+      id: 'eo',
+      label: 'EdgeOne',
+      domain: 'edgeone.gh-proxy.org',
+      description: '官方 edgeone 线路',
+    },
+  ];
+
+  private static readonly androidApkSourceUrl =
+    'https://github.com/Yar1991-Translation/CRD-APK/releases/latest/download/roblox.apk';
+
+  private static readonly androidZapkSourceUrl =
+    'https://github.com/Yar1991-Translation/CRD-APK/releases/latest/download/roblox.zapk';
 
   private static readonly androidPlayStoreUrl =
     'https://play.google.com/store/apps/details?id=com.roblox.client';
@@ -34,11 +82,11 @@ export class CrdHero extends LitElement {
   private static readonly fishstrapIconUrl =
     `${CrdHero.baseUrl}assets/icons/Fishstrap.png`;
 
-  private static readonly bloxstrapDownloadUrl =
-    'https://hk.gh-proxy.org/https://github.com/bloxstraplabs/bloxstrap/releases/download/v2.10.0/Bloxstrap-v2.10.0.exe';
+  private static readonly bloxstrapSourceUrl =
+    'https://github.com/bloxstraplabs/bloxstrap/releases/download/v2.10.0/Bloxstrap-v2.10.0.exe';
 
-  private static readonly fishstrapDownloadUrl =
-    'https://hk.gh-proxy.org/https://github.com/fishstrap/fishstrap/releases/latest/download/Fishstrap.exe';
+  private static readonly fishstrapSourceUrl =
+    'https://github.com/fishstrap/fishstrap/releases/latest/download/Fishstrap.exe';
 
   @state()
   private activeTabIndex = 0;
@@ -52,8 +100,27 @@ export class CrdHero extends LitElement {
   @state()
   private lastUpdate = '...';
 
+  @state()
+  private ghProxySelection: GhProxyOptionId = 'auto';
+
+  @state()
+  private ghProxyStatus = '自动模式会测速选择最优线路';
+
+  @state()
+  private ghProxyResolvedId: GhProxyManualOptionId = 'hk';
+
+  @state()
+  private ghProxyIsResolving = false;
+
+  @state()
+  private showGhProxySettings = false;
+
   @query('crd-rdd-dialog')
   private rddDialog!: CrdRddDialog;
+
+  private ghProxyResolvePromise: Promise<GhProxyManualOptionId> | null = null;
+
+  private ghProxyLastBenchmarkedAt = 0;
 
   static styles = css`
     :host {
@@ -139,6 +206,7 @@ export class CrdHero extends LitElement {
     }
 
     .download-section {
+      position: relative;
       width: 100%;
       background: var(--md-sys-color-surface-container-low);
       border-radius: 24px;
@@ -146,6 +214,132 @@ export class CrdHero extends LitElement {
       border: 1px solid var(--md-sys-color-outline-variant);
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
       overflow: hidden;
+    }
+
+    .download-settings-trigger {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 82%, transparent);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 75%, transparent);
+      color: var(--md-sys-color-on-surface-variant);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .download-settings-trigger:hover {
+      color: var(--md-sys-color-on-surface);
+      background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 94%, transparent);
+    }
+
+    .proxy-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: color-mix(in srgb, var(--md-sys-color-secondary-container) 55%, transparent);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-secondary) 28%, transparent);
+      text-align: left;
+    }
+
+    md-dialog {
+      --md-dialog-container-color: var(--md-sys-color-surface-container-high, var(--md-sys-color-surface));
+    }
+
+    .proxy-settings-dialog-content {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-top: 8px;
+    }
+
+    .proxy-settings-note {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 80%, transparent);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 65%, transparent);
+      color: var(--md-sys-color-on-surface-variant);
+      line-height: 1.55;
+      font-size: 0.86rem;
+    }
+
+    .proxy-copy {
+      flex: 1 1 280px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .proxy-copy strong {
+      color: var(--md-sys-color-on-secondary-container);
+      font-size: 1rem;
+    }
+
+    .proxy-copy span,
+    .proxy-status {
+      color: var(--md-sys-color-on-secondary-container);
+      opacity: 0.84;
+      line-height: 1.55;
+      font-size: 0.88rem;
+    }
+
+    .proxy-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: flex-end;
+      justify-content: flex-end;
+      flex: 0 0 auto;
+    }
+
+    .proxy-select-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: min(100%, 290px);
+      text-align: left;
+    }
+
+    .proxy-select-wrap span {
+      font-size: 0.76rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--md-sys-color-on-secondary-container);
+      opacity: 0.8;
+    }
+
+    .proxy-select {
+      appearance: none;
+      min-height: 44px;
+      padding: 0 42px 0 14px;
+      border-radius: 14px;
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-secondary) 35%, transparent);
+      background:
+        linear-gradient(45deg, transparent 50%, var(--md-sys-color-on-surface-variant) 50%) calc(100% - 18px) calc(50% - 3px) / 8px 8px no-repeat,
+        linear-gradient(135deg, var(--md-sys-color-on-surface-variant) 50%, transparent 50%) calc(100% - 12px) calc(50% - 3px) / 8px 8px no-repeat,
+        var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .proxy-select:focus {
+      outline: 2px solid color-mix(in srgb, var(--md-sys-color-primary) 45%, transparent);
+      outline-offset: 2px;
+    }
+
+    .proxy-status {
+      flex: 1 1 100%;
     }
 
     .desktop-download-layout {
@@ -443,6 +637,16 @@ export class CrdHero extends LitElement {
         flex: 1 1 calc(50% - 4px);
         min-width: 170px;
       }
+
+      .proxy-controls {
+        width: 100%;
+        justify-content: stretch;
+      }
+
+      .proxy-select-wrap,
+      .proxy-controls md-outlined-button {
+        flex: 1 1 100%;
+      }
     }
 
     @media (max-width: 480px) {
@@ -490,6 +694,16 @@ export class CrdHero extends LitElement {
         border-radius: 18px;
       }
 
+      .proxy-toolbar {
+        padding: 14px;
+        border-radius: 16px;
+      }
+
+      .download-settings-trigger {
+        top: 10px;
+        right: 10px;
+      }
+
       .desktop-download-layout {
         display: none;
       }
@@ -531,7 +745,168 @@ export class CrdHero extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
+    this.restoreGhProxySelection();
     this.fetchVersionInfo();
+  }
+
+  private restoreGhProxySelection() {
+    try {
+      const storedSelection = window.localStorage.getItem(CrdHero.ghProxyStorageKey);
+      if (CrdHero.isGhProxyOptionId(storedSelection)) {
+        this.ghProxySelection = storedSelection;
+      }
+    } catch (error) {
+      console.warn('Failed to restore gh-proxy preference', error);
+    }
+
+    void this.syncGhProxySelection();
+  }
+
+  private static isGhProxyOptionId(value: string | null): value is GhProxyOptionId {
+    return value !== null && CrdHero.ghProxyOptions.some((option) => option.id === value);
+  }
+
+  private static getGhProxyOption(optionId: GhProxyOptionId): GhProxyOption {
+    return CrdHero.ghProxyOptions.find((option) => option.id === optionId)
+      ?? CrdHero.ghProxyOptions[0];
+  }
+
+  private async syncGhProxySelection(forceRefresh = false) {
+    if (this.ghProxySelection === 'auto') {
+      await this.resolveBestGhProxy(forceRefresh);
+      return;
+    }
+
+    const option = CrdHero.getGhProxyOption(this.ghProxySelection);
+    this.ghProxyResolvedId = option.id as GhProxyManualOptionId;
+    this.ghProxyStatus = `已手动固定到 ${option.label} (${option.domain})`;
+  }
+
+  private async resolveBestGhProxy(forceRefresh = false): Promise<GhProxyManualOptionId> {
+    const isCacheFresh = Date.now() - this.ghProxyLastBenchmarkedAt < CrdHero.ghProxyAutoRefreshMs;
+    if (!forceRefresh && isCacheFresh && this.ghProxyResolvedId) {
+      const cachedOption = CrdHero.getGhProxyOption(this.ghProxyResolvedId);
+      this.ghProxyStatus = `自动选择当前使用 ${cachedOption.label} (${cachedOption.domain})`;
+      return this.ghProxyResolvedId;
+    }
+
+    if (this.ghProxyResolvePromise) {
+      return this.ghProxyResolvePromise;
+    }
+
+    this.ghProxyIsResolving = true;
+    this.ghProxyStatus = '自动测速中，正在选择最优 gh-proxy 线路...';
+
+    this.ghProxyResolvePromise = (async () => {
+      const options = CrdHero.ghProxyOptions.filter(
+        (option): option is GhProxyOption & { domain: string } => Boolean(option.domain)
+      );
+
+      const results = await Promise.all(
+        options.map(async (option) => ({
+          option,
+          latency: await this.measureGhProxyLatency(option.domain),
+        }))
+      );
+
+      const reachableResults = results
+        .filter((result) => Number.isFinite(result.latency))
+        .sort((left, right) => left.latency - right.latency);
+
+      const fallbackOption = CrdHero.getGhProxyOption('cf') as GhProxyOption & { domain: string };
+      const bestResult = reachableResults[0] ?? { option: fallbackOption, latency: Number.POSITIVE_INFINITY };
+
+      this.ghProxyResolvedId = bestResult.option.id as GhProxyManualOptionId;
+      this.ghProxyLastBenchmarkedAt = Date.now();
+
+      if (Number.isFinite(bestResult.latency)) {
+        this.ghProxyStatus =
+          `自动选择当前使用 ${bestResult.option.label} (${bestResult.option.domain})，约 ${Math.round(bestResult.latency)} ms`;
+      } else {
+        this.ghProxyStatus =
+          `自动测速失败，已回退到 ${bestResult.option.label} (${bestResult.option.domain})`;
+      }
+
+      return this.ghProxyResolvedId;
+    })()
+      .finally(() => {
+        this.ghProxyIsResolving = false;
+        this.ghProxyResolvePromise = null;
+      });
+
+    return this.ghProxyResolvePromise;
+  }
+
+  private measureGhProxyLatency(domain: string, timeoutMs = 2500): Promise<number> {
+    return new Promise((resolve) => {
+      const start = performance.now();
+      const image = new Image();
+
+      const finish = (latency: number) => {
+        clearTimeout(timeoutId);
+        image.onload = null;
+        image.onerror = null;
+        resolve(latency);
+      };
+
+      const timeoutId = window.setTimeout(() => finish(Number.POSITIVE_INFINITY), timeoutMs);
+
+      image.onload = () => finish(performance.now() - start);
+      image.onerror = () => finish(Number.POSITIVE_INFINITY);
+      image.src = `https://${domain}/favicon.ico?ts=${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    });
+  }
+
+  private buildGhProxyDownloadUrl(sourceUrl: string, optionId: GhProxyManualOptionId) {
+    const option = CrdHero.getGhProxyOption(optionId) as GhProxyOption & { domain: string };
+    return `https://${option.domain}/${sourceUrl}`;
+  }
+
+  private async handleGhProxyDownload(sourceUrl: string) {
+    const pendingWindow = window.open('about:blank', '_blank');
+    if (pendingWindow) {
+      pendingWindow.opener = null;
+    }
+
+    try {
+      const optionId = this.ghProxySelection === 'auto'
+        ? await this.resolveBestGhProxy()
+        : this.ghProxySelection;
+
+      const downloadUrl = this.buildGhProxyDownloadUrl(sourceUrl, optionId);
+
+      if (pendingWindow) {
+        pendingWindow.location.replace(downloadUrl);
+        return;
+      }
+
+      window.open(downloadUrl, '_blank', 'noopener,noreferrer');
+    } catch (error) {
+      pendingWindow?.close();
+      console.error('Failed to open gh-proxy download', error);
+    }
+  }
+
+  private handleGhProxySelectionChange(e: Event) {
+    const select = e.currentTarget as HTMLSelectElement;
+    if (!CrdHero.isGhProxyOptionId(select.value)) {
+      return;
+    }
+
+    this.ghProxySelection = select.value;
+
+    try {
+      window.localStorage.setItem(CrdHero.ghProxyStorageKey, this.ghProxySelection);
+    } catch (error) {
+      console.warn('Failed to persist gh-proxy preference', error);
+    }
+
+    void this.syncGhProxySelection(this.ghProxySelection === 'auto');
+  }
+
+  private getGhProxySelectionLabel() {
+    const optionId = this.ghProxySelection === 'auto' ? this.ghProxyResolvedId : this.ghProxySelection;
+    return CrdHero.getGhProxyOption(optionId).label;
   }
 
   private async fetchVersionInfo() {
@@ -591,21 +966,91 @@ export class CrdHero extends LitElement {
     }
   }
 
+  private renderGhProxySettingsEntry() {
+    return html`
+      <md-icon-button
+        class="download-settings-trigger"
+        aria-label="打开下载设置"
+        title="下载设置"
+        @click=${() => { this.showGhProxySettings = true; }}
+      >
+        <md-icon>settings</md-icon>
+      </md-icon-button>
+    `;
+  }
+
+  private renderGhProxyToolbar() {
+    return html`
+      <section class="proxy-toolbar">
+        <div class="proxy-copy">
+          <strong>gh-proxy 下载线路</strong>
+          <span>
+            Android 安装包和第三方启动器支持自动测速，也可以手动固定到你更顺手的节点。
+          </span>
+        </div>
+
+        <div class="proxy-controls">
+          <label class="proxy-select-wrap">
+            <span>当前线路</span>
+            <select
+              class="proxy-select"
+              .value=${this.ghProxySelection}
+              @change=${(e: Event) => this.handleGhProxySelectionChange(e)}
+            >
+              ${CrdHero.ghProxyOptions.map((option) => html`
+                <option value=${option.id}>
+                  ${option.domain
+                    ? `${option.label} (${option.domain})`
+                    : option.label}
+                </option>
+              `)}
+            </select>
+          </label>
+
+          <md-outlined-button
+            ?disabled=${this.ghProxySelection !== 'auto' || this.ghProxyIsResolving}
+            @click=${() => void this.syncGhProxySelection(true)}
+          >
+            ${this.ghProxyIsResolving ? '测速中...' : '重新测速'}
+          </md-outlined-button>
+        </div>
+
+        <div class="proxy-status">
+          当前生效：${this.getGhProxySelectionLabel()}。${this.ghProxyStatus}
+        </div>
+      </section>
+    `;
+  }
+
+  private renderGhProxySettingsDialog() {
+    return html`
+      <md-dialog
+        ?open=${this.showGhProxySettings}
+        @close=${() => { this.showGhProxySettings = false; }}
+      >
+        <div slot="headline">下载设置</div>
+        <div slot="content" class="proxy-settings-dialog-content">
+          <div class="proxy-settings-note">
+            设置会立即保存。Android 安装包和第三方启动器会使用这里选择的 gh-proxy 下载路线。
+          </div>
+          ${this.renderGhProxyToolbar()}
+        </div>
+        <div slot="actions">
+          <md-text-button @click=${() => { this.showGhProxySettings = false; }}>
+            关闭
+          </md-text-button>
+        </div>
+      </md-dialog>
+    `;
+  }
+
   private renderLauncherActions(className = 'launcher-actions') {
     return html`
       <div class=${className}>
-        <md-outlined-button
-          href=${CrdHero.bloxstrapDownloadUrl}
-          target="_blank"
-          download
-        >
+        <md-outlined-button @click=${() => void this.handleGhProxyDownload(CrdHero.bloxstrapSourceUrl)}>
           Bloxstrap
         </md-outlined-button>
-        <md-outlined-button
-          href=${CrdHero.fishstrapDownloadUrl}
-          target="_blank"
-          download
-        >
+        <md-outlined-button @click=${() => void this.handleGhProxyDownload(CrdHero.fishstrapSourceUrl)}>
           Fishstrap
         </md-outlined-button>
       </div>
@@ -615,18 +1060,10 @@ export class CrdHero extends LitElement {
   private renderAndroidActions(className = 'actions-row') {
     return html`
       <div class=${className}>
-        <md-filled-button
-          href=${CrdHero.androidZapkUrl}
-          target="_blank"
-          download
-        >
+        <md-filled-button @click=${() => void this.handleGhProxyDownload(CrdHero.androidZapkSourceUrl)}>
           推荐下载 .zapk
         </md-filled-button>
-        <md-filled-tonal-button
-          href=${CrdHero.androidApkUrl}
-          target="_blank"
-          download
-        >
+        <md-filled-tonal-button @click=${() => void this.handleGhProxyDownload(CrdHero.androidApkSourceUrl)}>
           备用下载 .apk
         </md-filled-tonal-button>
         <md-outlined-button
@@ -692,11 +1129,7 @@ export class CrdHero extends LitElement {
                 <span>Roblox 的第三方开源启动器，附带了许多额外的功能。</span>
               </div>
               <div class="card-actions">
-                <md-filled-tonal-button
-                  href=${CrdHero.bloxstrapDownloadUrl}
-                  target="_blank"
-                  download
-                >
+                <md-filled-tonal-button @click=${() => void this.handleGhProxyDownload(CrdHero.bloxstrapSourceUrl)}>
                   下载
                 </md-filled-tonal-button>
               </div>
@@ -712,11 +1145,7 @@ export class CrdHero extends LitElement {
                 <span>基于 Bloxstrap 的增强分支，提供多开、消息日志与跳过更新等功能。</span>
               </div>
               <div class="card-actions">
-                <md-filled-tonal-button
-                  href=${CrdHero.fishstrapDownloadUrl}
-                  target="_blank"
-                  download
-                >
+                <md-filled-tonal-button @click=${() => void this.handleGhProxyDownload(CrdHero.fishstrapSourceUrl)}>
                   下载
                 </md-filled-tonal-button>
               </div>
@@ -848,11 +1277,13 @@ export class CrdHero extends LitElement {
         </div>
 
         <div class="download-section">
+          ${this.renderGhProxySettingsEntry()}
           ${this.renderDesktopDownloadLayout()}
           ${this.renderMobileDownloadLayout()}
         </div>
       </div>
 
+      ${this.renderGhProxySettingsDialog()}
       <crd-rdd-dialog></crd-rdd-dialog>
     `;
   }
