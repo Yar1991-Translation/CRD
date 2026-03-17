@@ -1,0 +1,21 @@
+{
+  "title": "公告",
+  "subtitle": "这里会显示站点通知、线路维护、下载说明和版本提醒。",
+  "items": [
+    {
+      "id": "welcome",
+      "title": "公告系统已启用",
+      "content": "现在首页已经支持从远端 JSON 读取公告内容。你后续只需要把接口地址切到自己的服务器即可，无需重新改页面结构。",
+      "publishedAt": "2026-03-17T20:00:00+08:00",
+      "pinned": true,
+      "level": "success"
+    },
+    {
+      "id": "endpoint",
+      "title": "如何接入你的服务器",
+      "content": "默认读取 /announcements.json。若要改为你的香港服务器，请配置环境变量 VITE_ANNOUNCEMENTS_URL，例如 https://your-domain.com/api/announcements.json。",
+      "publishedAt": "2026-03-17T20:05:00+08:00",
+      "level": "info"
+    }
+  ]
+}

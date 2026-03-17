@@ -24,16 +24,29 @@
   --color-outline: var(--md-sys-color-outline);
 }
 
+html {
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
 body {
+  min-height: 100vh;
+  margin: 0;
+  font-family: var(--md-ref-typeface-plain);
   background-color: var(--md-sys-color-background);
+  background-image:
+    radial-gradient(
+      circle at top center,
+      color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent),
+      transparent 34%
+    );
   color: var(--md-sys-color-on-background);
   overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: color-mix(in srgb, var(--md-sys-color-on-background) 30%, transparent) transparent;
-}
-
-html {
-  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* 针对非 Shadow DOM 的全局滚动条 (Webkit) */

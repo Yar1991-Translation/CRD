@@ -10,7 +10,8 @@ import '@material/web/icon/icon.js';
 import '@material/web/iconbutton/icon-button.js';
 import '@material/web/tabs/tabs.js';
 import '@material/web/tabs/primary-tab.js';
-import '@material/web/tabs/secondary-tab.js';
+import '@material/web/labs/segmentedbutton/outlined-segmented-button.js';
+import '@material/web/labs/segmentedbuttonset/outlined-segmented-button-set.js';
 import '@material/web/progress/circular-progress.js';
 
 import type { CrdRddDialog } from './crd-rdd-dialog.js';
@@ -125,49 +126,49 @@ export class CrdHero extends LitElement {
   static styles = css`
     :host {
       display: block;
-      padding: clamp(24px, 6vw, 48px) clamp(16px, 4vw, 24px) clamp(32px, 6vw, 48px);
+      padding: clamp(28px, 6vw, 56px) clamp(16px, 4vw, 24px) clamp(40px, 7vw, 56px);
       background-color: var(--md-sys-color-background);
       text-align: center;
       overflow-x: hidden;
     }
 
     .hero-container {
-      max-width: 960px;
+      max-width: 1000px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: clamp(24px, 4vw, 32px);
+      gap: clamp(28px, 4vw, 36px);
     }
 
     .header-text {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       width: 100%;
     }
 
     h1 {
-      font-size: clamp(2.8rem, 9vw, 5rem);
+      font-size: clamp(3.1rem, 9vw, 5.4rem);
       margin: 0;
-      line-height: 1.05;
+      line-height: 0.95;
       color: var(--md-sys-color-on-background);
       font-weight: 700;
-      letter-spacing: clamp(0.02em, 0.6vw, 0.05em);
+      letter-spacing: -0.055em;
     }
 
     .subtitle {
-      font-size: clamp(1rem, 2.4vw, 1.15rem);
+      font-size: clamp(1rem, 2.4vw, 1.18rem);
       color: var(--md-sys-color-on-surface-variant);
       margin: 0;
-      max-width: 640px;
-      line-height: 1.65;
+      max-width: 680px;
+      line-height: 1.7;
     }
 
     .badges-row {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
       justify-content: center;
       width: 100%;
@@ -177,18 +178,19 @@ export class CrdHero extends LitElement {
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      padding: 8px 14px;
+      min-height: 36px;
+      padding: 0 16px;
       max-width: 100%;
-      background: color-mix(in srgb, var(--md-sys-color-tertiary-container) 50%, transparent);
-      color: var(--md-sys-color-on-tertiary-container);
-      border: 1px solid color-mix(in srgb, var(--md-sys-color-tertiary) 30%, transparent);
-      border-radius: 12px;
-      font-size: 0.85rem;
-      font-family: 'Consolas', monospace;
+      background: color-mix(in srgb, var(--md-sys-color-secondary-container) 92%, transparent);
+      color: var(--md-sys-color-on-secondary-container);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
     }
 
     .version-badge md-icon {
-      font-size: 16px;
+      font-size: 18px;
       flex: none;
     }
 
@@ -201,41 +203,58 @@ export class CrdHero extends LitElement {
     }
 
     .version-meta {
-      opacity: 0.7;
-      font-size: 0.75rem;
+      color: color-mix(in srgb, var(--md-sys-color-on-secondary-container) 72%, transparent);
+      font-size: 0.74rem;
     }
 
     .download-section {
       position: relative;
       width: 100%;
-      background: var(--md-sys-color-surface-container-low);
-      border-radius: 24px;
-      padding: clamp(18px, 3vw, 24px) clamp(16px, 4vw, 32px) clamp(20px, 4vw, 32px);
-      border: 1px solid var(--md-sys-color-outline-variant);
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      background:
+        linear-gradient(
+          180deg,
+          color-mix(in srgb, var(--md-sys-color-surface-container-high) 72%, transparent),
+          var(--md-sys-color-surface-container-low)
+        );
+      border-radius: 28px;
+      padding: clamp(22px, 3.5vw, 30px) clamp(16px, 4vw, 32px) clamp(24px, 4vw, 34px);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 88%, transparent);
       overflow: hidden;
     }
 
     .download-settings-trigger {
       position: absolute;
-      top: 12px;
-      right: 12px;
+      top: 14px;
+      right: 14px;
       z-index: 1;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      border-radius: 999px;
-      background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 82%, transparent);
-      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 75%, transparent);
+      border-radius: 16px;
+      background: var(--md-sys-color-surface-container-high);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 88%, transparent);
       color: var(--md-sys-color-on-surface-variant);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+      --md-icon-button-state-layer-width: 48px;
+      --md-icon-button-state-layer-height: 48px;
+      --md-icon-button-state-layer-shape: 16px;
+      --md-icon-button-icon-color: var(--md-sys-color-on-surface-variant);
+      --md-icon-button-hover-icon-color: var(--md-sys-color-on-surface);
+      --md-icon-button-focus-icon-color: var(--md-sys-color-on-surface);
+      --md-icon-button-pressed-icon-color: var(--md-sys-color-on-surface);
+      --md-icon-button-hover-state-layer-color: var(--md-sys-color-on-surface-variant);
+      --md-icon-button-pressed-state-layer-color: var(--md-sys-color-on-surface);
+      transition:
+        background-color 180ms ease,
+        border-color 180ms ease,
+        color 180ms ease;
     }
 
     .download-settings-trigger:hover {
       color: var(--md-sys-color-on-surface);
-      background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 94%, transparent);
+      background: var(--md-sys-color-surface-container-highest);
+      border-color: color-mix(in srgb, var(--md-sys-color-primary) 26%, var(--md-sys-color-outline-variant));
+    }
+
+    .download-settings-trigger:focus-visible {
+      outline: 2px solid color-mix(in srgb, var(--md-sys-color-primary) 54%, transparent);
+      outline-offset: 2px;
     }
 
     .proxy-toolbar {
@@ -243,16 +262,23 @@ export class CrdHero extends LitElement {
       flex-wrap: wrap;
       align-items: flex-end;
       justify-content: space-between;
-      gap: 16px;
-      padding: 16px 18px;
-      border-radius: 18px;
-      background: color-mix(in srgb, var(--md-sys-color-secondary-container) 55%, transparent);
-      border: 1px solid color-mix(in srgb, var(--md-sys-color-secondary) 28%, transparent);
+      gap: 18px;
+      padding: 18px 20px;
+      border-radius: 24px;
+      background:
+        linear-gradient(
+          180deg,
+          color-mix(in srgb, var(--md-sys-color-secondary-container) 58%, transparent),
+          color-mix(in srgb, var(--md-sys-color-surface-container-high) 92%, transparent)
+        );
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 84%, transparent);
       text-align: left;
     }
 
     md-dialog {
       --md-dialog-container-color: var(--md-sys-color-surface-container-high, var(--md-sys-color-surface));
+      --md-dialog-headline-color: var(--md-sys-color-on-surface);
+      --md-dialog-supporting-text-color: var(--md-sys-color-on-surface-variant);
     }
 
     .proxy-settings-dialog-content {
@@ -264,9 +290,9 @@ export class CrdHero extends LitElement {
 
     .proxy-settings-note {
       padding: 12px 14px;
-      border-radius: 14px;
-      background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 80%, transparent);
-      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 65%, transparent);
+      border-radius: 18px;
+      background: var(--md-sys-color-surface-container-highest);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 78%, transparent);
       color: var(--md-sys-color-on-surface-variant);
       line-height: 1.55;
       font-size: 0.86rem;
@@ -282,7 +308,7 @@ export class CrdHero extends LitElement {
 
     .proxy-copy strong {
       color: var(--md-sys-color-on-secondary-container);
-      font-size: 1rem;
+      font-size: 1.02rem;
     }
 
     .proxy-copy span,
@@ -320,21 +346,27 @@ export class CrdHero extends LitElement {
 
     .proxy-select {
       appearance: none;
-      min-height: 44px;
-      padding: 0 42px 0 14px;
-      border-radius: 14px;
-      border: 1px solid color-mix(in srgb, var(--md-sys-color-secondary) 35%, transparent);
+      min-height: 48px;
+      padding: 0 42px 0 16px;
+      border-radius: 16px;
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 84%, transparent);
       background:
         linear-gradient(45deg, transparent 50%, var(--md-sys-color-on-surface-variant) 50%) calc(100% - 18px) calc(50% - 3px) / 8px 8px no-repeat,
         linear-gradient(135deg, var(--md-sys-color-on-surface-variant) 50%, transparent 50%) calc(100% - 12px) calc(50% - 3px) / 8px 8px no-repeat,
-        var(--md-sys-color-surface);
+        var(--md-sys-color-surface-container-lowest);
       color: var(--md-sys-color-on-surface);
       font: inherit;
       cursor: pointer;
+      transition: border-color 180ms ease, background-color 180ms ease;
+    }
+
+    .proxy-select:hover {
+      border-color: color-mix(in srgb, var(--md-sys-color-primary) 22%, var(--md-sys-color-outline-variant));
+      background-color: var(--md-sys-color-surface-container-low);
     }
 
     .proxy-select:focus {
-      outline: 2px solid color-mix(in srgb, var(--md-sys-color-primary) 45%, transparent);
+      outline: 2px solid color-mix(in srgb, var(--md-sys-color-primary) 50%, transparent);
       outline-offset: 2px;
     }
 
@@ -357,9 +389,6 @@ export class CrdHero extends LitElement {
     }
 
     md-tabs {
-      width: 100%;
-      margin-bottom: 24px;
-      --md-primary-tab-container-color: transparent;
       overflow-x: auto;
       scrollbar-width: none;
     }
@@ -368,9 +397,87 @@ export class CrdHero extends LitElement {
       display: none;
     }
 
+    .platform-tabs {
+      width: fit-content;
+      max-width: 100%;
+      margin: 0 auto 28px;
+      padding: 6px;
+      border-radius: 999px;
+      background: var(--md-sys-color-surface-container-high);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 84%, transparent);
+      --md-primary-tab-container-color: transparent;
+    }
+
+    .platform-tabs md-primary-tab {
+      --md-primary-tab-container-shape: 999px;
+      --md-primary-tab-active-indicator-color: var(--md-sys-color-primary);
+      --md-primary-tab-active-indicator-height: 3px;
+      --md-primary-tab-active-indicator-shape: 999px;
+      --md-primary-tab-label-text-color: var(--md-sys-color-on-surface-variant);
+      --md-primary-tab-hover-label-text-color: var(--md-sys-color-on-surface);
+      --md-primary-tab-focus-label-text-color: var(--md-sys-color-on-surface);
+      --md-primary-tab-pressed-label-text-color: var(--md-sys-color-on-surface);
+      --md-primary-tab-active-label-text-color: var(--md-sys-color-primary);
+      --md-primary-tab-active-hover-label-text-color: var(--md-sys-color-primary);
+      --md-primary-tab-active-focus-label-text-color: var(--md-sys-color-primary);
+      --md-primary-tab-icon-color: var(--md-sys-color-on-surface-variant);
+      --md-primary-tab-hover-icon-color: var(--md-sys-color-on-surface);
+      --md-primary-tab-focus-icon-color: var(--md-sys-color-on-surface);
+      --md-primary-tab-active-icon-color: var(--md-sys-color-primary);
+      --md-primary-tab-active-hover-icon-color: var(--md-sys-color-primary);
+      --md-primary-tab-active-focus-icon-color: var(--md-sys-color-primary);
+      --md-primary-tab-hover-state-layer-color: var(--md-sys-color-on-surface);
+      --md-primary-tab-pressed-state-layer-color: var(--md-sys-color-primary);
+      --md-primary-tab-active-hover-state-layer-color: var(--md-sys-color-primary);
+      --md-primary-tab-active-pressed-state-layer-color: var(--md-sys-color-primary);
+    }
+
+    .segmented-shell {
+      display: flex;
+      justify-content: flex-start;
+      margin: 0 0 2px;
+    }
+
+    .segmented-shell md-outlined-segmented-button-set {
+      width: fit-content;
+      max-width: 100%;
+      padding: 4px;
+      border-radius: 999px;
+      background: var(--md-sys-color-surface-container-highest);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 86%, transparent);
+    }
+
+    .segmented-shell md-outlined-segmented-button {
+      --md-outlined-segmented-button-shape: 999px;
+      --md-outlined-segmented-button-outline-color: color-mix(
+        in srgb,
+        var(--md-sys-color-outline-variant) 68%,
+        transparent
+      );
+      --md-outlined-segmented-button-unselected-label-text-color: var(--md-sys-color-on-surface-variant);
+      --md-outlined-segmented-button-unselected-hover-label-text-color: var(--md-sys-color-on-surface);
+      --md-outlined-segmented-button-unselected-focus-label-text-color: var(--md-sys-color-on-surface);
+      --md-outlined-segmented-button-unselected-pressed-label-text-color: var(--md-sys-color-on-surface);
+      --md-outlined-segmented-button-unselected-icon-color: var(--md-sys-color-on-surface-variant);
+      --md-outlined-segmented-button-unselected-hover-icon-color: var(--md-sys-color-on-surface);
+      --md-outlined-segmented-button-selected-container-color: var(--md-sys-color-secondary-container);
+      --md-outlined-segmented-button-selected-label-text-color: var(--md-sys-color-on-secondary-container);
+      --md-outlined-segmented-button-selected-hover-label-text-color: var(--md-sys-color-on-secondary-container);
+      --md-outlined-segmented-button-selected-focus-label-text-color: var(--md-sys-color-on-secondary-container);
+      --md-outlined-segmented-button-selected-pressed-label-text-color: var(--md-sys-color-on-secondary-container);
+      --md-outlined-segmented-button-selected-icon-color: var(--md-sys-color-on-secondary-container);
+      --md-outlined-segmented-button-selected-hover-icon-color: var(--md-sys-color-on-secondary-container);
+      --md-outlined-segmented-button-selected-focus-icon-color: var(--md-sys-color-on-secondary-container);
+      --md-outlined-segmented-button-selected-pressed-icon-color: var(--md-sys-color-on-secondary-container);
+      --md-outlined-segmented-button-unselected-hover-state-layer-color: var(--md-sys-color-on-surface);
+      --md-outlined-segmented-button-unselected-pressed-state-layer-color: var(--md-sys-color-on-surface);
+      --md-outlined-segmented-button-selected-hover-state-layer-color: var(--md-sys-color-on-secondary-container);
+      --md-outlined-segmented-button-selected-pressed-state-layer-color: var(--md-sys-color-on-secondary-container);
+    }
+
     .tab-panel {
       display: none;
-      animation: fadeIn 0.3s ease;
+      animation: fadeIn 220ms ease;
     }
 
     .tab-panel.active {
@@ -381,8 +488,8 @@ export class CrdHero extends LitElement {
 
     .sub-tab-panel {
       display: none;
-      animation: fadeIn 0.3s ease;
-      margin-top: 16px;
+      animation: fadeIn 220ms ease;
+      margin-top: 18px;
     }
 
     .sub-tab-panel.active {
@@ -392,46 +499,87 @@ export class CrdHero extends LitElement {
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(5px); }
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+
+    md-filled-button,
+    md-filled-tonal-button,
+    md-outlined-button {
+      --md-filled-button-container-height: 42px;
+      --md-filled-button-container-shape: 999px;
+      --md-filled-button-label-text-size: 0.88rem;
+      --md-filled-button-label-text-weight: 600;
+      --md-filled-tonal-button-container-height: 42px;
+      --md-filled-tonal-button-container-shape: 999px;
+      --md-filled-tonal-button-label-text-size: 0.88rem;
+      --md-filled-tonal-button-label-text-weight: 600;
+      --md-outlined-button-container-height: 42px;
+      --md-outlined-button-container-shape: 999px;
+      --md-outlined-button-label-text-size: 0.88rem;
+      --md-outlined-button-label-text-weight: 600;
+    }
+
+    md-filled-tonal-button {
+      --md-filled-tonal-button-container-color: var(--md-sys-color-secondary-container);
+      --md-filled-tonal-button-label-text-color: var(--md-sys-color-on-secondary-container);
+      --md-filled-tonal-button-hover-state-layer-color: var(--md-sys-color-on-secondary-container);
+      --md-filled-tonal-button-pressed-state-layer-color: var(--md-sys-color-on-secondary-container);
+    }
+
+    md-outlined-button {
+      --md-outlined-button-outline-color: color-mix(
+        in srgb,
+        var(--md-sys-color-outline-variant) 86%,
+        transparent
+      );
+      --md-outlined-button-label-text-color: var(--md-sys-color-on-surface);
+      --md-outlined-button-hover-label-text-color: var(--md-sys-color-primary);
+      --md-outlined-button-focus-label-text-color: var(--md-sys-color-primary);
+      --md-outlined-button-hover-state-layer-color: var(--md-sys-color-primary);
+      --md-outlined-button-pressed-state-layer-color: var(--md-sys-color-primary);
     }
 
     .download-card,
     .mobile-platform-card {
       display: flex;
       align-items: center;
-      gap: 16px;
-      padding: 20px;
-      border-radius: 18px;
-      background: var(--md-sys-color-surface);
-      border: 1px solid var(--md-sys-color-outline-variant);
-      transition: all 0.2s ease;
+      gap: 18px;
+      padding: 22px;
+      border-radius: 24px;
+      background: var(--md-sys-color-surface-container-low);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 88%, transparent);
+      transition:
+        background-color 180ms ease,
+        border-color 180ms ease,
+        transform 180ms ease;
       text-align: left;
     }
 
     .download-card:hover,
     .mobile-platform-card:hover {
       background: var(--md-sys-color-surface-container-high);
-      border-color: var(--md-sys-color-primary);
+      border-color: color-mix(in srgb, var(--md-sys-color-primary) 20%, var(--md-sys-color-outline-variant));
+      transform: translateY(-1px);
     }
 
     .download-card.main,
     .mobile-platform-card.main {
-      border-color: var(--md-sys-color-primary);
+      border-color: color-mix(in srgb, var(--md-sys-color-primary) 34%, var(--md-sys-color-outline-variant));
       background: var(--md-sys-color-primary-container);
     }
 
     .download-card.main:hover,
     .mobile-platform-card.main:hover {
       background: var(--md-sys-color-primary-container);
-      filter: brightness(0.97);
+      border-color: color-mix(in srgb, var(--md-sys-color-primary) 44%, var(--md-sys-color-outline-variant));
     }
 
     .download-card md-icon,
     .mobile-platform-icon {
       font-size: 2.5rem;
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -445,8 +593,8 @@ export class CrdHero extends LitElement {
     }
 
     .custom-icon {
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       background-size: contain;
       background-position: center;
       background-repeat: no-repeat;
@@ -464,7 +612,8 @@ export class CrdHero extends LitElement {
 
     .info strong,
     .mobile-platform-copy strong {
-      font-size: 1.1rem;
+      font-size: 1.08rem;
+      line-height: 1.35;
       color: var(--md-sys-color-on-surface);
       margin-bottom: 4px;
     }
@@ -476,9 +625,9 @@ export class CrdHero extends LitElement {
 
     .info span,
     .mobile-platform-copy span {
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       color: var(--md-sys-color-on-surface-variant);
-      line-height: 1.55;
+      line-height: 1.6;
     }
 
     .download-card.main .info span,
@@ -490,9 +639,9 @@ export class CrdHero extends LitElement {
     .info .support-note,
     .mobile-support-note {
       margin-top: 8px;
-      font-size: 0.78rem;
-      line-height: 1.5;
-      opacity: 0.9;
+      font-size: 0.8rem;
+      line-height: 1.55;
+      color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 92%, transparent);
     }
 
     .info .support-note a,
@@ -508,7 +657,7 @@ export class CrdHero extends LitElement {
     .launcher-actions,
     .mobile-actions {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       flex-wrap: wrap;
       justify-content: flex-start;
       flex-shrink: 0;
@@ -525,9 +674,9 @@ export class CrdHero extends LitElement {
     .mobile-secondary {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      padding-top: 12px;
-      border-top: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 65%, transparent);
+      gap: 12px;
+      padding-top: 14px;
+      border-top: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 72%, transparent);
       width: 100%;
     }
 
@@ -607,13 +756,13 @@ export class CrdHero extends LitElement {
       }
 
       .download-section {
-        border-radius: 22px;
+        border-radius: 26px;
       }
 
       .download-card {
         flex-direction: column;
         align-items: stretch;
-        padding: 18px;
+        padding: 20px;
       }
 
       .download-card md-icon,
@@ -635,7 +784,7 @@ export class CrdHero extends LitElement {
       .actions-row > *,
       .launcher-actions > * {
         flex: 1 1 calc(50% - 4px);
-        min-width: 170px;
+        min-width: 180px;
       }
 
       .proxy-controls {
@@ -663,18 +812,22 @@ export class CrdHero extends LitElement {
       }
 
       h1 {
-        font-size: clamp(2.6rem, 14vw, 3rem);
+        font-size: clamp(2.75rem, 14vw, 3.2rem);
       }
 
       .subtitle {
         font-size: 0.98rem;
       }
 
+      .platform-tabs {
+        width: 100%;
+        margin-bottom: 24px;
+      }
+
       .version-badge {
         width: 100%;
         justify-content: center;
-        padding: 12px 14px;
-        border-radius: 14px;
+        padding: 10px 14px;
       }
 
       .version-copy {
@@ -690,13 +843,13 @@ export class CrdHero extends LitElement {
       }
 
       .download-section {
-        padding: 16px 14px 18px;
-        border-radius: 18px;
+        padding: 18px 14px 20px;
+        border-radius: 24px;
       }
 
       .proxy-toolbar {
         padding: 14px;
-        border-radius: 16px;
+        border-radius: 20px;
       }
 
       .download-settings-trigger {
@@ -714,6 +867,11 @@ export class CrdHero extends LitElement {
 
       .mobile-platform-card {
         padding: 16px;
+      }
+
+      .mobile-platform-card,
+      .download-card {
+        border-radius: 22px;
       }
 
       .mobile-platform-header {
@@ -955,9 +1113,9 @@ export class CrdHero extends LitElement {
     this.activeTabIndex = tabs.activeTabIndex;
   }
 
-  private handleWinTabChange(e: Event) {
-    const tabs = e.currentTarget as HTMLElement & { activeTabIndex: number };
-    this.activeWinTabIndex = tabs.activeTabIndex;
+  private handleWinSegmentSelection(e: Event) {
+    const event = e as CustomEvent<{ index: number }>;
+    this.activeWinTabIndex = event.detail.index;
   }
 
   private openRddDialog(binaryType: string) {
@@ -972,6 +1130,7 @@ export class CrdHero extends LitElement {
         class="download-settings-trigger"
         aria-label="打开下载设置"
         title="下载设置"
+        touch-target="wrapper"
         @click=${() => { this.showGhProxySettings = true; }}
       >
         <md-icon>settings</md-icon>
@@ -1047,12 +1206,12 @@ export class CrdHero extends LitElement {
   private renderLauncherActions(className = 'launcher-actions') {
     return html`
       <div class=${className}>
-        <md-outlined-button @click=${() => void this.handleGhProxyDownload(CrdHero.bloxstrapSourceUrl)}>
+        <md-filled-tonal-button @click=${() => void this.handleGhProxyDownload(CrdHero.bloxstrapSourceUrl)}>
           Bloxstrap
-        </md-outlined-button>
-        <md-outlined-button @click=${() => void this.handleGhProxyDownload(CrdHero.fishstrapSourceUrl)}>
+        </md-filled-tonal-button>
+        <md-filled-tonal-button @click=${() => void this.handleGhProxyDownload(CrdHero.fishstrapSourceUrl)}>
           Fishstrap
-        </md-outlined-button>
+        </md-filled-tonal-button>
       </div>
     `;
   }
@@ -1079,7 +1238,7 @@ export class CrdHero extends LitElement {
   private renderDesktopDownloadLayout() {
     return html`
       <div class="desktop-download-layout">
-        <md-tabs @change=${this.handleTabChange}>
+        <md-tabs class="platform-tabs" @change=${this.handleTabChange}>
           <md-primary-tab ?active=${this.activeTabIndex === 0}>
             <md-icon slot="icon"><svg viewBox="0 0 448 512" fill="currentColor" width="100%" height="100%"><path d="M0 93.7l183.6-25.3v177.4H0V93.7zm0 324.6l183.6 25.3V268.4H0v149.9zm203.8 28L448 480V268.4H203.8v177.9zm0-380.6v180.1H448V32L203.8 65.7z"/></svg></md-icon>
             Windows
@@ -1095,10 +1254,20 @@ export class CrdHero extends LitElement {
         </md-tabs>
 
         <div class="tab-panel ${this.activeTabIndex === 0 ? 'active' : ''}">
-          <md-tabs @change=${this.handleWinTabChange}>
-            <md-secondary-tab ?active=${this.activeWinTabIndex === 0}>官方原版</md-secondary-tab>
-            <md-secondary-tab ?active=${this.activeWinTabIndex === 1}>第三方启动器</md-secondary-tab>
-          </md-tabs>
+          <div class="segmented-shell">
+            <md-outlined-segmented-button-set @segmented-button-set-selection=${this.handleWinSegmentSelection}>
+              <md-outlined-segmented-button
+                .label=${'官方原版'}
+                ?selected=${this.activeWinTabIndex === 0}
+              >
+              </md-outlined-segmented-button>
+              <md-outlined-segmented-button
+                .label=${'第三方启动器'}
+                ?selected=${this.activeWinTabIndex === 1}
+              >
+              </md-outlined-segmented-button>
+            </md-outlined-segmented-button-set>
+          </div>
 
           <div class="sub-tab-panel ${this.activeWinTabIndex === 0 ? 'active' : ''}">
             <div class="download-card main">

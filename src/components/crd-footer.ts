@@ -8,28 +8,36 @@ export class CrdFooter extends LitElement {
   static styles = css`
     :host {
       display: block;
-      background-color: var(--md-sys-color-surface-variant);
       color: var(--md-sys-color-on-surface-variant);
-      padding: 32px 24px;
+      padding: 24px;
       margin-top: auto;
     }
 
     .footer-container {
-      max-width: 1200px;
+      max-width: 1120px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
       gap: 16px;
       text-align: center;
       font-size: 0.875rem;
+      padding: 24px clamp(18px, 4vw, 28px);
+      border-radius: 28px;
+      background:
+        linear-gradient(
+          180deg,
+          color-mix(in srgb, var(--md-sys-color-surface-container-high) 84%, transparent),
+          var(--md-sys-color-surface-container-low)
+        );
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 82%, transparent);
     }
 
     .disclaimer {
       font-size: 0.75rem;
-      opacity: 0.8;
       max-width: 800px;
       margin: 0 auto;
       line-height: 1.6;
+      color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 92%, transparent);
     }
 
     .footer-links {
@@ -43,20 +51,24 @@ export class CrdFooter extends LitElement {
     a {
       color: var(--md-sys-color-primary);
       text-decoration: none;
+      font-weight: 600;
     }
 
     a:hover {
       text-decoration: underline;
+      text-underline-offset: 3px;
     }
 
     @media (max-width: 640px) {
       :host {
-        padding: 24px 16px;
+        padding: 16px;
       }
 
       .footer-container {
         gap: 12px;
         font-size: 0.82rem;
+        padding: 20px 16px;
+        border-radius: 24px;
       }
 
       .disclaimer {

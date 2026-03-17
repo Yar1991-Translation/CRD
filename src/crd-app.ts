@@ -3,6 +3,7 @@ import { customElement } from 'lit/decorators.js';
 import { setupDynamicColor } from './theme-utils.js';
 
 import './components/crd-navbar.js';
+import './components/crd-announcements.js';
 import './components/crd-hero.js';
 import './components/crd-footer.js';
 import './components/crd-disclaimer.js';
@@ -34,6 +35,7 @@ export class CrdApp extends LitElement {
     return html`
       <crd-navbar></crd-navbar>
       <main>
+        <crd-announcements></crd-announcements>
         <crd-hero></crd-hero>
         <!-- 可以后续在此加入更多模块，比如 FAQ、版本列表等 -->
       </main>
