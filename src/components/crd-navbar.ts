@@ -1,5 +1,7 @@
 import { LitElement, html, css } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
+
+import { getEffectiveColorScheme, toggleColorScheme } from '../theme-utils.js';
 
 import '@material/web/iconbutton/icon-button.js';
 import '@material/web/icon/icon.js';
@@ -8,6 +10,14 @@ import '@material/web/icon/icon.js';
 export class CrdNavbar extends LitElement {
   private static readonly homeUrl = import.meta.env.BASE_URL;
   private static readonly repoUrl = 'https://github.com/Yar1991-Translation/CRD';
+
+  @state()
+  private isDarkMode = getEffectiveColorScheme() === 'dark';
+
+  private readonly handleColorSchemeChange = (event: Event) => {
+    const detail = (event as CustomEvent<{ dark: boolean }>).detail;
+    this.isDarkMode = detail.dark;
+  };
 
   static styles = css`
     :host {
@@ -96,6 +106,25 @@ export class CrdNavbar extends LitElement {
     }
   `;
 
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('crd-color-scheme-changed', this.handleColorSchemeChange);
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener('crd-color-scheme-changed', this.handleColorSchemeChange);
+    super.disconnectedCallback();
+  }
+
+  private openAnnouncements() {
+    window.dispatchEvent(new Event('crd-open-announcements'));
+  }
+
+  private toggleTheme() {
+    toggleColorScheme();
+    this.isDarkMode = getEffectiveColorScheme() === 'dark';
+  }
+
   render() {
     return html`
       <header>
@@ -103,6 +132,22 @@ export class CrdNavbar extends LitElement {
           CRD.
         </a>
         <div class="actions">
+          <md-icon-button
+            aria-label="公告"
+            title="公告"
+            touch-target="wrapper"
+            @click=${this.openAnnouncements}
+          >
+            <md-icon>campaign</md-icon>
+          </md-icon-button>
+          <md-icon-button
+            aria-label=${this.isDarkMode ? '切换到浅色模式' : '切换到深色模式'}
+            title=${this.isDarkMode ? '切换到浅色模式' : '切换到深色模式'}
+            touch-target="wrapper"
+            @click=${this.toggleTheme}
+          >
+            <md-icon>${this.isDarkMode ? 'light_mode' : 'dark_mode'}</md-icon>
+          </md-icon-button>
           <md-icon-button aria-label="GitHub" href=${CrdNavbar.repoUrl} target="_blank" touch-target="wrapper">
             <md-icon>code</md-icon>
           </md-icon-button>

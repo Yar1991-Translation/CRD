@@ -57,6 +57,14 @@ export class CrdAnnouncements extends LitElement {
   @state()
   private showDialog = false;
 
+  private readonly handleOpenRequest = () => {
+    if (!this.isLoading && (this.error || this.items.length === 0)) {
+      void this.fetchAnnouncements();
+    }
+
+    this.showDialog = true;
+  };
+
   static styles = css`
     :host {
       display: block;
@@ -64,6 +72,8 @@ export class CrdAnnouncements extends LitElement {
 
     md-dialog {
       --md-dialog-container-color: var(--md-sys-color-surface-container-high, var(--md-sys-color-surface));
+      --md-dialog-headline-color: var(--md-sys-color-on-surface);
+      --md-dialog-supporting-text-color: var(--md-sys-color-on-surface-variant);
       width: min(720px, 92vw);
       max-width: 92vw;
     }
@@ -82,15 +92,6 @@ export class CrdAnnouncements extends LitElement {
       pointer-events: auto;
     }
 
-    .banner-shadow,
-    .banner {
-      border-radius: 20px;
-    }
-
-    .banner-shadow {
-      display: none;
-    }
-
     .banner {
       position: relative;
       overflow: hidden;
@@ -99,70 +100,36 @@ export class CrdAnnouncements extends LitElement {
       flex-direction: column;
       gap: 14px;
       color: var(--md-sys-color-on-surface);
+      border-radius: 24px;
       background:
-        radial-gradient(circle at top right, color-mix(in srgb, var(--md-sys-color-primary) 20%, transparent), transparent 36%),
         linear-gradient(
-          135deg,
-          color-mix(in srgb, var(--md-sys-color-surface-container-high) 88%, transparent),
-          color-mix(in srgb, var(--md-sys-color-surface-container) 82%, transparent)
+          180deg,
+          color-mix(in srgb, var(--md-sys-color-surface-container-highest) 88%, transparent),
+          var(--md-sys-color-surface-container-high)
         );
-      backdrop-filter: blur(18px) saturate(160%);
-      -webkit-backdrop-filter: blur(18px) saturate(160%);
-      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 42%, transparent);
-      box-shadow:
-        0 20px 48px rgba(0, 0, 0, 0.16),
-        0 6px 14px rgba(0, 0, 0, 0.08);
-      transform: translateY(-18px) scale(0.95) rotate(-1.2deg);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 82%, transparent);
+      transform: translateY(-10px);
       opacity: 0;
-      animation: announcementEnter 0.72s cubic-bezier(0.2, 0.9, 0.18, 1) forwards;
-    }
-
-    .banner::before {
-      content: '';
-      position: absolute;
-      inset: -14%;
-      background:
-        radial-gradient(
-          circle at 20% 26%,
-          color-mix(in srgb, var(--md-sys-color-primary) 15%, transparent),
-          transparent 32%
-        ),
-        radial-gradient(
-          circle at 82% 18%,
-          color-mix(in srgb, var(--md-sys-color-tertiary) 12%, transparent),
-          transparent 28%
-        ),
-        radial-gradient(
-          circle at 58% 82%,
-          color-mix(in srgb, white 8%, transparent),
-          transparent 34%
-        );
-      opacity: 0.22;
-      pointer-events: none;
+      animation: announcementEnter 260ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
     }
 
     .banner::after {
       content: '';
       position: absolute;
-      inset: 0 auto auto 0;
-      width: 100%;
-      height: 3px;
-      background: linear-gradient(
-        90deg,
-        transparent 0%,
-        color-mix(in srgb, var(--md-sys-color-primary) 82%, transparent) 20%,
-        color-mix(in srgb, var(--md-sys-color-tertiary) 72%, transparent) 80%,
-        transparent 100%
-      );
-      transform: scaleX(0.2);
+      top: 0;
+      left: 18px;
+      right: 18px;
+      height: 2px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--md-sys-color-primary) 60%, transparent);
+      transform: scaleX(0.24);
       transform-origin: left center;
       opacity: 0;
-      animation: accentLineEnter 0.56s linear 0.1s forwards;
-      pointer-events: none;
+      animation: accentEnter 240ms ease 70ms forwards;
     }
 
     .banner.closing {
-      animation: announcementExit 0.42s cubic-bezier(0.4, 0, 1, 1) forwards;
+      animation: announcementExit 220ms cubic-bezier(0.4, 0, 1, 1) forwards;
     }
 
     .banner-header {
@@ -203,7 +170,6 @@ export class CrdAnnouncements extends LitElement {
       height: 8px;
       border-radius: 50%;
       background: var(--md-sys-color-primary);
-      box-shadow: 0 0 0 4px color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
       flex: none;
       margin-top: 2px;
     }
@@ -267,6 +233,16 @@ export class CrdAnnouncements extends LitElement {
       margin: -8px -8px 0 0;
       color: var(--md-sys-color-on-surface-variant);
       flex: none;
+      border-radius: 14px;
+      --md-icon-button-state-layer-width: 40px;
+      --md-icon-button-state-layer-height: 40px;
+      --md-icon-button-state-layer-shape: 14px;
+      --md-icon-button-icon-color: var(--md-sys-color-on-surface-variant);
+      --md-icon-button-hover-icon-color: var(--md-sys-color-on-surface);
+      --md-icon-button-focus-icon-color: var(--md-sys-color-on-surface);
+      --md-icon-button-pressed-icon-color: var(--md-sys-color-on-surface);
+      --md-icon-button-hover-state-layer-color: var(--md-sys-color-on-surface);
+      --md-icon-button-pressed-state-layer-color: var(--md-sys-color-on-surface);
     }
 
     .banner-content {
@@ -297,12 +273,12 @@ export class CrdAnnouncements extends LitElement {
       display: flex;
       align-items: flex-start;
       gap: 14px;
-      padding: 16px 18px;
-      border-radius: 16px;
+      padding: 18px 20px;
+      border-radius: 20px;
       background:
-        radial-gradient(circle at top right, color-mix(in srgb, var(--md-sys-color-primary) 16%, transparent), transparent 42%),
+        radial-gradient(circle at top right, color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent), transparent 42%),
         var(--md-sys-color-surface-container-low);
-      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 56%, transparent);
     }
 
     .dialog-hero md-icon {
@@ -335,14 +311,29 @@ export class CrdAnnouncements extends LitElement {
       gap: 12px;
     }
 
-    .dialog-card {
+    .dialog-card,
+    .dialog-state {
       display: flex;
       flex-direction: column;
       gap: 10px;
       padding: 16px 18px;
-      border-radius: 16px;
+      border-radius: 18px;
       background: var(--md-sys-color-surface-container-low);
-      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 35%, transparent);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 46%, transparent);
+    }
+
+    .dialog-state {
+      color: var(--md-sys-color-on-surface-variant);
+      line-height: 1.6;
+    }
+
+    .dialog-state strong {
+      color: var(--md-sys-color-on-surface);
+      font-size: 0.98rem;
+    }
+
+    .dialog-state.error strong {
+      color: var(--md-sys-color-error);
     }
 
     .dialog-card-header {
@@ -385,50 +376,44 @@ export class CrdAnnouncements extends LitElement {
     }
 
     @keyframes announcementEnter {
-      0% {
-        transform: translateY(-18px) scale(0.95) rotate(-1.2deg);
+      from {
+        transform: translateY(-10px);
         opacity: 0;
       }
-      65% {
-        transform: translateY(6px) scale(1.01) rotate(0.35deg);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(0) scale(1) rotate(0deg);
+
+      to {
+        transform: translateY(0);
         opacity: 1;
       }
     }
 
     @keyframes announcementExit {
-      0% {
-        transform: translateY(0) scale(1);
+      from {
+        transform: translateY(0);
         opacity: 1;
       }
-      100% {
-        transform: translateY(-16px) scale(0.96);
+
+      to {
+        transform: translateY(-10px);
         opacity: 0;
       }
     }
 
-    @keyframes accentLineEnter {
-      0% {
+    @keyframes accentEnter {
+      from {
         opacity: 0;
-        transform: scaleX(0.2);
+        transform: scaleX(0.24);
       }
-      100% {
-        opacity: 0.68;
+
+      to {
+        opacity: 0.72;
         transform: scaleX(1);
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .banner-shadow,
       .banner,
-      .banner::before,
-      .banner::after,
-      .banner-header,
-      .banner-content,
-      .banner-actions {
+      .banner::after {
         animation: none;
         opacity: 1;
         transform: none;
@@ -444,10 +429,11 @@ export class CrdAnnouncements extends LitElement {
 
       .banner {
         padding: 16px;
-        border-radius: 18px;
+        border-radius: 20px;
       }
 
       .dialog-card,
+      .dialog-state,
       .dialog-hero {
         padding: 14px 16px;
       }
@@ -460,7 +446,13 @@ export class CrdAnnouncements extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
+    window.addEventListener('crd-open-announcements', this.handleOpenRequest);
     void this.fetchAnnouncements();
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener('crd-open-announcements', this.handleOpenRequest);
+    super.disconnectedCallback();
   }
 
   private get featuredAnnouncement() {
@@ -568,7 +560,7 @@ export class CrdAnnouncements extends LitElement {
     window.setTimeout(() => {
       this.showBanner = false;
       this.closing = false;
-    }, 420);
+    }, 220);
   }
 
   private renderBadge(item: AnnouncementItem) {
@@ -595,7 +587,6 @@ export class CrdAnnouncements extends LitElement {
     return html`
       <div class="banner-shell" aria-live="polite">
         <div class="banner-stack">
-          <div class="banner-shadow"></div>
           <section class="banner ${this.closing ? 'closing' : ''}">
             <div class="banner-header">
               <div class="banner-title">
@@ -615,6 +606,7 @@ export class CrdAnnouncements extends LitElement {
               <md-icon-button
                 class="close-btn"
                 aria-label="关闭公告提示"
+                touch-target="wrapper"
                 @click=${() => this.closeBanner()}
               >
                 <md-icon>close</md-icon>
@@ -642,10 +634,6 @@ export class CrdAnnouncements extends LitElement {
   }
 
   private renderDialog() {
-    if (this.isLoading || this.error || this.items.length === 0) {
-      return nothing;
-    }
-
     return html`
       <md-dialog
         ?open=${this.showDialog}
@@ -662,31 +650,48 @@ export class CrdAnnouncements extends LitElement {
             </div>
           </div>
 
-          <div class="dialog-list">
-            ${this.items.map((item) => html`
-              <article class="dialog-card">
-                <div class="dialog-card-header">
-                  <div class="dialog-card-title">
-                    <strong>${item.title}</strong>
-                    ${this.renderBadge(item)}
+          ${this.isLoading ? html`
+            <div class="dialog-state">
+              <strong>正在加载公告</strong>
+              <span>稍等片刻，我们正在获取最新公告内容。</span>
+            </div>
+          ` : this.error ? html`
+            <div class="dialog-state error">
+              <strong>公告暂时无法加载</strong>
+              <span>${this.error}</span>
+            </div>
+          ` : this.items.length === 0 ? html`
+            <div class="dialog-state">
+              <strong>当前没有公告</strong>
+              <span>暂时没有新的站点通知、维护提醒或版本公告。</span>
+            </div>
+          ` : html`
+            <div class="dialog-list">
+              ${this.items.map((item) => html`
+                <article class="dialog-card">
+                  <div class="dialog-card-header">
+                    <div class="dialog-card-title">
+                      <strong>${item.title}</strong>
+                      ${this.renderBadge(item)}
+                    </div>
+                    ${item.publishedAt
+                      ? html`<span class="meta-row">发布时间：${this.formatDate(item.publishedAt)}</span>`
+                      : nothing}
                   </div>
-                  ${item.publishedAt
-                    ? html`<span class="meta-row">发布时间：${this.formatDate(item.publishedAt)}</span>`
+
+                  <p class="dialog-card-content">${item.content}</p>
+
+                  ${item.link
+                    ? html`
+                        <a class="detail-link" href=${item.link} target="_blank" rel="noopener noreferrer">
+                          ${item.linkText}
+                        </a>
+                      `
                     : nothing}
-                </div>
-
-                <p class="dialog-card-content">${item.content}</p>
-
-                ${item.link
-                  ? html`
-                      <a class="detail-link" href=${item.link} target="_blank" rel="noopener noreferrer">
-                        ${item.linkText}
-                      </a>
-                    `
-                  : nothing}
-              </article>
-            `)}
-          </div>
+                </article>
+              `)}
+            </div>
+          `}
         </div>
 
         <div slot="actions">
