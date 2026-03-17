@@ -33,14 +33,20 @@
   --md-sys-color-outline-variant: #c0c7d2;
   --md-sys-color-surface-tint: var(--md-sys-color-primary);
 
-  --md-ref-typeface-plain:
+  --crd-font-body:
+    "MiSans Bold",
+    "MiSans",
     "Segoe UI Variable Text",
     "Segoe UI",
     "SF Pro Text",
     "SF Pro Display",
     system-ui,
     sans-serif;
-  --md-ref-typeface-brand: var(--md-ref-typeface-plain);
+  --crd-font-small: "Google Sans", sans-serif;
+  --crd-font-brand: "Google Sans", sans-serif;
+
+  --md-ref-typeface-plain: var(--crd-font-body);
+  --md-ref-typeface-brand: var(--crd-font-body);
 
   --md-sys-shape-corner-extra-small: 8px;
   --md-sys-shape-corner-small: 12px;
@@ -53,10 +59,16 @@
   --md-sys-typescale-headline-large-font: var(--md-ref-typeface-brand);
   --md-sys-typescale-title-large-font: var(--md-ref-typeface-plain);
   --md-sys-typescale-title-medium-font: var(--md-ref-typeface-plain);
+  --md-sys-typescale-title-small-font: var(--crd-font-small);
   --md-sys-typescale-body-large-font: var(--md-ref-typeface-plain);
   --md-sys-typescale-body-medium-font: var(--md-ref-typeface-plain);
-  --md-sys-typescale-label-large-font: var(--md-ref-typeface-plain);
-  --md-sys-typescale-label-medium-font: var(--md-ref-typeface-plain);
+  --md-sys-typescale-body-small-font: var(--crd-font-small);
+  --md-sys-typescale-label-large-font: var(--crd-font-small);
+  --md-sys-typescale-label-medium-font: var(--crd-font-small);
+  --md-sys-typescale-title-small-weight: 700;
+  --md-sys-typescale-body-small-weight: 700;
+  --md-sys-typescale-label-large-weight: 700;
+  --md-sys-typescale-label-medium-weight: 700;
 
   /* Derived tonal surfaces for dynamic themes */
   --md-sys-color-surface-dim:

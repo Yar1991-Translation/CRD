@@ -190,6 +190,7 @@ export class CrdAnnouncements extends LitElement {
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      font-family: var(--crd-font-small);
       font-size: 0.78rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -220,6 +221,7 @@ export class CrdAnnouncements extends LitElement {
       align-items: center;
       gap: 8px;
       flex-wrap: wrap;
+      font-family: var(--crd-font-small);
       font-size: 0.78rem;
       color: var(--md-sys-color-on-surface-variant);
     }
@@ -230,6 +232,7 @@ export class CrdAnnouncements extends LitElement {
       min-height: 24px;
       padding: 0 10px;
       border-radius: 999px;
+      font-family: var(--crd-font-small);
       font-size: 0.72rem;
       font-weight: 700;
       letter-spacing: 0.04em;

@@ -150,11 +150,15 @@ export class CrdHero extends LitElement {
     }
 
     h1 {
+      font-family: var(--crd-font-brand);
+      font-optical-sizing: auto;
       font-size: clamp(3.1rem, 9vw, 5.4rem);
       margin: 0;
       line-height: 0.95;
       color: var(--md-sys-color-on-background);
       font-weight: 700;
+      font-style: normal;
+      font-variation-settings: "GRAD" 120;
       letter-spacing: -0.055em;
     }
 
@@ -203,6 +207,8 @@ export class CrdHero extends LitElement {
     }
 
     .version-meta {
+      font-family: var(--crd-font-small);
+      font-weight: 700;
       color: color-mix(in srgb, var(--md-sys-color-on-secondary-container) 72%, transparent);
       font-size: 0.74rem;
     }
@@ -224,32 +230,29 @@ export class CrdHero extends LitElement {
 
     .download-settings-trigger {
       position: absolute;
-      top: 14px;
-      right: 14px;
+      top: 18px;
+      right: 18px;
       z-index: 1;
-      border-radius: 16px;
-      background: var(--md-sys-color-surface-container-high);
-      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 88%, transparent);
+      border-radius: 999px;
+      background: transparent;
+      border: none;
       color: var(--md-sys-color-on-surface-variant);
       --md-icon-button-state-layer-width: 48px;
       --md-icon-button-state-layer-height: 48px;
-      --md-icon-button-state-layer-shape: 16px;
+      --md-icon-button-state-layer-shape: 999px;
       --md-icon-button-icon-color: var(--md-sys-color-on-surface-variant);
-      --md-icon-button-hover-icon-color: var(--md-sys-color-on-surface);
-      --md-icon-button-focus-icon-color: var(--md-sys-color-on-surface);
-      --md-icon-button-pressed-icon-color: var(--md-sys-color-on-surface);
-      --md-icon-button-hover-state-layer-color: var(--md-sys-color-on-surface-variant);
-      --md-icon-button-pressed-state-layer-color: var(--md-sys-color-on-surface);
+      --md-icon-button-hover-icon-color: var(--md-sys-color-primary);
+      --md-icon-button-focus-icon-color: var(--md-sys-color-primary);
+      --md-icon-button-pressed-icon-color: var(--md-sys-color-primary);
+      --md-icon-button-hover-state-layer-color: var(--md-sys-color-primary);
+      --md-icon-button-pressed-state-layer-color: var(--md-sys-color-primary);
       transition:
-        background-color 180ms ease,
-        border-color 180ms ease,
         color 180ms ease;
     }
 
     .download-settings-trigger:hover {
-      color: var(--md-sys-color-on-surface);
-      background: var(--md-sys-color-surface-container-highest);
-      border-color: color-mix(in srgb, var(--md-sys-color-primary) 26%, var(--md-sys-color-outline-variant));
+      color: var(--md-sys-color-primary);
+      background: transparent;
     }
 
     .download-settings-trigger:focus-visible {
@@ -289,6 +292,8 @@ export class CrdHero extends LitElement {
     }
 
     .proxy-settings-note {
+      font-family: var(--crd-font-small);
+      font-weight: 700;
       padding: 12px 14px;
       border-radius: 18px;
       background: var(--md-sys-color-surface-container-highest);
@@ -313,6 +318,8 @@ export class CrdHero extends LitElement {
 
     .proxy-copy span,
     .proxy-status {
+      font-family: var(--crd-font-small);
+      font-weight: 700;
       color: var(--md-sys-color-on-secondary-container);
       opacity: 0.84;
       line-height: 1.55;
@@ -337,6 +344,8 @@ export class CrdHero extends LitElement {
     }
 
     .proxy-select-wrap span {
+      font-family: var(--crd-font-small);
+      font-weight: 700;
       font-size: 0.76rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -401,15 +410,18 @@ export class CrdHero extends LitElement {
       width: fit-content;
       max-width: 100%;
       margin: 0 auto 28px;
-      padding: 6px;
+      padding: 6px 6px 0;
       border-radius: 999px;
       background: var(--md-sys-color-surface-container-high);
       border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 84%, transparent);
+      overflow: hidden;
       --md-primary-tab-container-color: transparent;
     }
 
     .platform-tabs md-primary-tab {
       --md-primary-tab-container-shape: 999px;
+      --md-primary-tab-container-height: 52px;
+      --md-primary-tab-with-icon-and-label-text-container-height: 60px;
       --md-primary-tab-active-indicator-color: var(--md-sys-color-primary);
       --md-primary-tab-active-indicator-height: 3px;
       --md-primary-tab-active-indicator-shape: 999px;
@@ -434,17 +446,18 @@ export class CrdHero extends LitElement {
 
     .segmented-shell {
       display: flex;
-      justify-content: flex-start;
-      margin: 0 0 2px;
+      justify-content: center;
+      margin: 0 0 8px;
     }
 
     .segmented-shell md-outlined-segmented-button-set {
       width: fit-content;
       max-width: 100%;
-      padding: 4px;
+      margin: 0 auto;
+      padding: 3px;
       border-radius: 999px;
-      background: var(--md-sys-color-surface-container-highest);
-      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 86%, transparent);
+      background: color-mix(in srgb, var(--md-sys-color-surface-container-lowest) 94%, transparent);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline) 52%, transparent);
     }
 
     .segmented-shell md-outlined-segmented-button {
@@ -565,14 +578,24 @@ export class CrdHero extends LitElement {
 
     .download-card.main,
     .mobile-platform-card.main {
-      border-color: color-mix(in srgb, var(--md-sys-color-primary) 34%, var(--md-sys-color-outline-variant));
-      background: var(--md-sys-color-primary-container);
+      border-color: color-mix(in srgb, var(--md-sys-color-primary) 24%, var(--md-sys-color-outline-variant));
+      background:
+        linear-gradient(
+          180deg,
+          color-mix(in srgb, var(--md-sys-color-surface-container-lowest) 88%, var(--md-sys-color-primary-container)),
+          color-mix(in srgb, var(--md-sys-color-surface-container-lowest) 80%, var(--md-sys-color-primary-container))
+        );
     }
 
     .download-card.main:hover,
     .mobile-platform-card.main:hover {
-      background: var(--md-sys-color-primary-container);
-      border-color: color-mix(in srgb, var(--md-sys-color-primary) 44%, var(--md-sys-color-outline-variant));
+      background:
+        linear-gradient(
+          180deg,
+          color-mix(in srgb, var(--md-sys-color-surface-container-lowest) 84%, var(--md-sys-color-primary-container)),
+          color-mix(in srgb, var(--md-sys-color-surface-container-lowest) 74%, var(--md-sys-color-primary-container))
+        );
+      border-color: color-mix(in srgb, var(--md-sys-color-primary) 32%, var(--md-sys-color-outline-variant));
     }
 
     .download-card md-icon,
@@ -589,7 +612,7 @@ export class CrdHero extends LitElement {
 
     .download-card.main md-icon,
     .mobile-platform-card.main .mobile-platform-icon {
-      color: var(--md-sys-color-on-primary-container);
+      color: var(--md-sys-color-primary);
     }
 
     .custom-icon {
@@ -620,7 +643,7 @@ export class CrdHero extends LitElement {
 
     .download-card.main .info strong,
     .mobile-platform-card.main .mobile-platform-copy strong {
-      color: var(--md-sys-color-on-primary-container);
+      color: var(--md-sys-color-on-surface);
     }
 
     .info span,
@@ -632,12 +655,14 @@ export class CrdHero extends LitElement {
 
     .download-card.main .info span,
     .mobile-platform-card.main .mobile-platform-copy span {
-      color: var(--md-sys-color-on-primary-container);
-      opacity: 0.82;
+      color: var(--md-sys-color-on-surface-variant);
+      opacity: 1;
     }
 
     .info .support-note,
     .mobile-support-note {
+      font-family: var(--crd-font-small);
+      font-weight: 700;
       margin-top: 8px;
       font-size: 0.8rem;
       line-height: 1.55;
@@ -681,6 +706,8 @@ export class CrdHero extends LitElement {
     }
 
     .secondary-label {
+      font-family: var(--crd-font-small);
+      font-weight: 700;
       font-size: 0.76rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -690,7 +717,27 @@ export class CrdHero extends LitElement {
 
     .download-card.main .secondary-label,
     .mobile-platform-card.main .secondary-label {
-      color: var(--md-sys-color-on-primary-container);
+      color: var(--md-sys-color-primary);
+    }
+
+    .download-card.main md-outlined-button,
+    .mobile-platform-card.main md-outlined-button {
+      --md-outlined-button-label-text-color: var(--md-sys-color-primary);
+      --md-outlined-button-hover-label-text-color: var(--md-sys-color-primary);
+      --md-outlined-button-focus-label-text-color: var(--md-sys-color-primary);
+      --md-outlined-button-pressed-label-text-color: var(--md-sys-color-primary);
+      --md-outlined-button-outline-color: color-mix(
+        in srgb,
+        var(--md-sys-color-primary) 26%,
+        var(--md-sys-color-outline-variant)
+      );
+      --md-outlined-button-pressed-outline-color: color-mix(
+        in srgb,
+        var(--md-sys-color-primary) 34%,
+        var(--md-sys-color-outline-variant)
+      );
+      --md-outlined-button-hover-state-layer-color: var(--md-sys-color-primary);
+      --md-outlined-button-pressed-state-layer-color: var(--md-sys-color-primary);
     }
 
     .mobile-platform-list {
@@ -822,6 +869,7 @@ export class CrdHero extends LitElement {
       .platform-tabs {
         width: 100%;
         margin-bottom: 24px;
+        padding-bottom: 0;
       }
 
       .version-badge {
@@ -853,8 +901,8 @@ export class CrdHero extends LitElement {
       }
 
       .download-settings-trigger {
-        top: 10px;
-        right: 10px;
+        top: 14px;
+        right: 14px;
       }
 
       .desktop-download-layout {

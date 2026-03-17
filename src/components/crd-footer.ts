@@ -33,11 +33,20 @@ export class CrdFooter extends LitElement {
     }
 
     .disclaimer {
+      font-family: var(--crd-font-small);
+      font-weight: 700;
       font-size: 0.75rem;
       max-width: 800px;
       margin: 0 auto;
       line-height: 1.6;
       color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 92%, transparent);
+    }
+
+    .font-note {
+      font-family: var(--crd-font-small);
+      font-weight: 700;
+      font-size: 0.78rem;
+      color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 88%, transparent);
     }
 
     .footer-links {
@@ -88,6 +97,7 @@ export class CrdFooter extends LitElement {
         <div>
           &copy; ${new Date().getFullYear()} CRD (China Roblox Download). All rights reserved.
         </div>
+        <div class="font-note">界面字体：MiSans Bold</div>
         <div class="disclaimer">
           免责声明：本站仅提供 Roblox 客户端相关下载分流入口，不隶属于 Roblox 官方。
           “Roblox” 及相关商标、Logo 均归 Roblox Corporation 所有。下载文件均来自官方或对应项目的原始发布地址，

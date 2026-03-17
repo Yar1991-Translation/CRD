@@ -42,8 +42,12 @@ export class CrdNavbar extends LitElement {
       display: flex;
       align-items: center;
       gap: 12px;
+      font-family: var(--crd-font-brand);
+      font-optical-sizing: auto;
       font-weight: 700;
       font-size: clamp(1.05rem, 2.8vw, 1.28rem);
+      font-style: normal;
+      font-variation-settings: "GRAD" 120;
       color: var(--md-sys-color-on-surface);
       text-decoration: none;
       white-space: nowrap;
