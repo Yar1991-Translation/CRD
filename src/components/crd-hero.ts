@@ -1172,6 +1172,40 @@ export class CrdHero extends LitElement {
     }
   }
 
+  private renderWindows11Icon() {
+    return html`
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 128 128"
+        width="100%"
+        height="100%"
+        aria-hidden="true"
+      >
+        <path
+          fill="var(--md-sys-color-primary)"
+          d="M67.328 67.331h60.669V128H67.328zm-67.325 0h60.669V128H.003zM67.328 0h60.669v60.669H67.328zM.003 0h60.669v60.669H.003z"
+        ></path>
+      </svg>
+    `;
+  }
+
+  private renderAppleLogoIcon() {
+    return html`
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        width="100%"
+        height="100%"
+        aria-hidden="true"
+      >
+        <path
+          fill="currentColor"
+          d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.09997 22C7.78997 22.05 6.79997 20.68 5.95997 19.47C4.24997 17 2.93997 12.45 4.69997 9.39C5.56997 7.87 7.12997 6.91 8.81997 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"
+        ></path>
+      </svg>
+    `;
+  }
+
   private renderGhProxySettingsEntry() {
     return html`
       <md-icon-button
@@ -1288,11 +1322,11 @@ export class CrdHero extends LitElement {
       <div class="desktop-download-layout">
         <md-tabs class="platform-tabs" @change=${this.handleTabChange}>
           <md-primary-tab ?active=${this.activeTabIndex === 0}>
-            <md-icon slot="icon"><svg viewBox="0 0 448 512" fill="currentColor" width="100%" height="100%"><path d="M0 93.7l183.6-25.3v177.4H0V93.7zm0 324.6l183.6 25.3V268.4H0v149.9zm203.8 28L448 480V268.4H203.8v177.9zm0-380.6v180.1H448V32L203.8 65.7z"/></svg></md-icon>
+            <md-icon slot="icon">${this.renderWindows11Icon()}</md-icon>
             Windows
           </md-primary-tab>
           <md-primary-tab ?active=${this.activeTabIndex === 1}>
-            <md-icon slot="icon"><svg viewBox="0 0 384 512" fill="currentColor" width="100%" height="100%"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg></md-icon>
+            <md-icon slot="icon">${this.renderAppleLogoIcon()}</md-icon>
             macOS
           </md-primary-tab>
           <md-primary-tab ?active=${this.activeTabIndex === 2}>
@@ -1319,7 +1353,7 @@ export class CrdHero extends LitElement {
 
           <div class="sub-tab-panel ${this.activeWinTabIndex === 0 ? 'active' : ''}">
             <div class="download-card main">
-              <md-icon><svg viewBox="0 0 448 512" fill="currentColor" width="100%" height="100%"><path d="M0 93.7l183.6-25.3v177.4H0V93.7zm0 324.6l183.6 25.3V268.4H0v149.9zm203.8 28L448 480V268.4H203.8v177.9zm0-380.6v180.1H448V32L203.8 65.7z"/></svg></md-icon>
+              <md-icon>${this.renderWindows11Icon()}</md-icon>
               <div class="info">
                 <strong>Windows 官方原版</strong>
                 <span>适合绝大多数 PC 用户，稳定可靠，点击时会实时获取最新官方安装包。</span>
@@ -1372,7 +1406,7 @@ export class CrdHero extends LitElement {
 
         <div class="tab-panel ${this.activeTabIndex === 1 ? 'active' : ''}">
           <div class="download-card main">
-            <md-icon><svg viewBox="0 0 384 512" fill="currentColor" width="100%" height="100%"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg></md-icon>
+            <md-icon>${this.renderAppleLogoIcon()}</md-icon>
             <div class="info">
               <strong>macOS 官方版</strong>
               <span>支持 Intel 与 Apple Silicon (M1/M2/M3) 原生运行，下载时会实时获取最新官方包。</span>
@@ -1415,7 +1449,7 @@ export class CrdHero extends LitElement {
         <div class="mobile-platform-list">
           <section class="mobile-platform-card main">
             <div class="mobile-platform-header">
-              <div class="mobile-platform-icon"><svg viewBox="0 0 448 512" fill="currentColor" width="100%" height="100%"><path d="M0 93.7l183.6-25.3v177.4H0V93.7zm0 324.6l183.6 25.3V268.4H0v149.9zm203.8 28L448 480V268.4H203.8v177.9zm0-380.6v180.1H448V32L203.8 65.7z"/></svg></div>
+              <div class="mobile-platform-icon">${this.renderWindows11Icon()}</div>
               <div class="mobile-platform-copy">
                 <strong>Windows 官方原版</strong>
                 <span>优先提供官方安装包下载，同时保留 RDD 免安装本体作为快速方案。</span>
@@ -1437,7 +1471,7 @@ export class CrdHero extends LitElement {
 
           <section class="mobile-platform-card">
             <div class="mobile-platform-header">
-              <div class="mobile-platform-icon"><svg viewBox="0 0 384 512" fill="currentColor" width="100%" height="100%"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg></div>
+              <div class="mobile-platform-icon">${this.renderAppleLogoIcon()}</div>
               <div class="mobile-platform-copy">
                 <strong>macOS 官方版</strong>
                 <span>适配 Intel 与 Apple Silicon 设备，点击时会实时获取当前官方最新包。</span>
