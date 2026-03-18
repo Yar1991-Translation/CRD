@@ -11,22 +11,37 @@ import { renderChangelogMarkdown } from '../utils/changelog-render.js';
 
 @customElement('crd-changelog-page')
 export class CrdChangelogPage extends LitElement {
+  private static readonly syntaxGuideStorageKey = 'crd:syntax-guide-access';
+
+  private static readonly syntaxGuideTag = '1145141919810';
+
   @state()
   private selectedLogId = changelogEntries[0]?.id ?? '';
 
   @state()
   private showSyntaxGuide = false;
 
+  @state()
+  private syntaxGuideUnlocked = false;
+
   private readonly syntaxGuideHtml = renderChangelogMarkdown(changelogSyntaxGuide);
 
   connectedCallback() {
     super.connectedCallback();
     this.syncSelectedLogFromHash();
+    this.syncSyntaxGuideAccess();
+    this.registerSyntaxGuideConsoleAccess();
     window.addEventListener('hashchange', this.handleHashChange);
   }
 
   disconnectedCallback() {
     window.removeEventListener('hashchange', this.handleHashChange);
+    if (window.crdSyntaxGuideAccess === this.handleSyntaxGuideConsoleAccess) {
+      delete window.crdSyntaxGuideAccess;
+    }
+    if (window.crdSyntaxGuideReset === this.handleSyntaxGuideConsoleReset) {
+      delete window.crdSyntaxGuideReset;
+    }
     super.disconnectedCallback();
   }
 
@@ -48,6 +63,20 @@ export class CrdChangelogPage extends LitElement {
     }
   }
 
+  private syncSyntaxGuideAccess() {
+    const storedTag = window.localStorage.getItem(CrdChangelogPage.syntaxGuideStorageKey);
+    this.syntaxGuideUnlocked = storedTag === CrdChangelogPage.syntaxGuideTag;
+
+    if (!this.syntaxGuideUnlocked) {
+      this.showSyntaxGuide = false;
+    }
+  }
+
+  private registerSyntaxGuideConsoleAccess() {
+    window.crdSyntaxGuideAccess = this.handleSyntaxGuideConsoleAccess;
+    window.crdSyntaxGuideReset = this.handleSyntaxGuideConsoleReset;
+  }
+
   private selectLog(logId: string) {
     if (logId === this.selectedLogId) {
       return;
@@ -64,6 +93,27 @@ export class CrdChangelogPage extends LitElement {
 
   private readonly closeSyntaxGuide = () => {
     this.showSyntaxGuide = false;
+  };
+
+  private readonly handleSyntaxGuideConsoleAccess = (tag?: string) => {
+    const normalizedTag = String(tag ?? '').trim();
+    if (normalizedTag !== CrdChangelogPage.syntaxGuideTag) {
+      console.warn('Invalid CRD syntax tag.');
+      return false;
+    }
+
+    window.localStorage.setItem(CrdChangelogPage.syntaxGuideStorageKey, normalizedTag);
+    this.syntaxGuideUnlocked = true;
+    console.info('CRD syntax guide unlocked.');
+    return true;
+  };
+
+  private readonly handleSyntaxGuideConsoleReset = () => {
+    window.localStorage.removeItem(CrdChangelogPage.syntaxGuideStorageKey);
+    this.syntaxGuideUnlocked = false;
+    this.showSyntaxGuide = false;
+    console.info('CRD syntax guide hidden.');
+    return true;
   };
 
   private get selectedLog() {
@@ -983,7 +1033,7 @@ export class CrdChangelogPage extends LitElement {
           <h1 class="intro-title">更新历史</h1>
           <p class="intro-summary">
             这里集中记录 CRD 的阶段性迭代、界面更新和功能修复。后续每一次发布都会按日期写入日志，
-            你可以在左侧切换不同日期，也可以打开语法手册查看推荐写法。
+            你可以在左侧切换不同日期查看不同阶段的更新内容。
           </p>
         </section>
 
@@ -995,36 +1045,38 @@ export class CrdChangelogPage extends LitElement {
               这里会自动出现新的切换项。
             </p>
 
-            <button
-              class="dates-panel__syntax-entry"
-              type="button"
-              aria-haspopup="dialog"
-              @click=${this.openSyntaxGuide}
-            >
-              <div class="syntax-entry__header">
-                <span class="syntax-entry__icon">
-                  <md-icon>menu_book</md-icon>
-                </span>
-                <div class="syntax-entry__copy">
-                  <span class="syntax-entry__eyebrow">写日志时可参考</span>
-                  <span class="syntax-entry__title">打开语法手册</span>
-                  <span class="syntax-entry__summary">
-                    查看 front matter、Markdown 和 CRD 专属标签的大卡片示例，更适合直接照着写。
+            ${this.syntaxGuideUnlocked ? html`
+              <button
+                class="dates-panel__syntax-entry"
+                type="button"
+                aria-haspopup="dialog"
+                @click=${this.openSyntaxGuide}
+              >
+                <div class="syntax-entry__header">
+                  <span class="syntax-entry__icon">
+                    <md-icon>menu_book</md-icon>
                   </span>
+                  <div class="syntax-entry__copy">
+                    <span class="syntax-entry__eyebrow">写日志时可参考</span>
+                    <span class="syntax-entry__title">打开语法手册</span>
+                    <span class="syntax-entry__summary">
+                      查看 front matter、Markdown 和 CRD 专属标签的大卡片示例，更适合直接照着写。
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              <div class="syntax-entry__chips">
-                <span>Front Matter</span>
-                <span>Markdown</span>
-                <span>CRD Tags</span>
-              </div>
+                <div class="syntax-entry__chips">
+                  <span>Front Matter</span>
+                  <span>Markdown</span>
+                  <span>CRD Tags</span>
+                </div>
 
-              <div class="syntax-entry__footer">
-                <span>查看完整语法说明</span>
-                <md-icon>arrow_forward</md-icon>
-              </div>
-            </button>
+                <div class="syntax-entry__footer">
+                  <span>查看完整语法说明</span>
+                  <md-icon>arrow_forward</md-icon>
+                </div>
+              </button>
+            ` : nothing}
 
             ${changelogEntries.map((entry) => html`
               <button
@@ -1058,39 +1110,46 @@ export class CrdChangelogPage extends LitElement {
         </div>
       </div>
 
-      <md-dialog
-        class="syntax-dialog"
-        ?open=${this.showSyntaxGuide}
-        @close=${this.closeSyntaxGuide}
-      >
-        <div slot="headline">更新日志语法手册</div>
-        <div slot="content" class="syntax-dialog-content">
-          <div class="syntax-dialog-lead">
-            <strong>这份手册现在更像一个真正的文档面板。</strong>
-            <p>
-              你可以在这里直接查看 front matter、标准 Markdown 和 CRD 专属标签的完整示例。
-              我把它改成了更大的卡片式结构，方便在写日志时快速对照和复制。
-            </p>
-          </div>
+      ${this.syntaxGuideUnlocked ? html`
+        <md-dialog
+          class="syntax-dialog"
+          ?open=${this.showSyntaxGuide}
+          @close=${this.closeSyntaxGuide}
+        >
+          <div slot="headline">更新日志语法手册</div>
+          <div slot="content" class="syntax-dialog-content">
+            <div class="syntax-dialog-lead">
+              <strong>这份手册现在更像一个真正的文档面板。</strong>
+              <p>
+                你可以在这里直接查看 front matter、标准 Markdown 和 CRD 专属标签的完整示例。
+                我把它改成了更大的卡片式结构，方便在写日志时快速对照和复制。
+              </p>
+            </div>
 
-          <div class="syntax-dialog-renderer">
-            <div class="log-renderer">
-              ${this.syntaxGuideHtml ? unsafeHTML(this.syntaxGuideHtml) : nothing}
+            <div class="syntax-dialog-renderer">
+              <div class="log-renderer">
+                ${this.syntaxGuideHtml ? unsafeHTML(this.syntaxGuideHtml) : nothing}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div slot="actions">
-          <md-text-button @click=${this.closeSyntaxGuide}>
-            关闭
-          </md-text-button>
-        </div>
-      </md-dialog>
+          <div slot="actions">
+            <md-text-button @click=${this.closeSyntaxGuide}>
+              关闭
+            </md-text-button>
+          </div>
+        </md-dialog>
+      ` : nothing}
     `;
   }
 }
 
 declare global {
+  interface Window {
+    crdSyntaxGuideAccess?: (tag?: string) => boolean;
+    crdSyntaxGuideReset?: () => boolean;
+  }
+
   interface HTMLElementTagNameMap {
     'crd-changelog-page': CrdChangelogPage;
   }
