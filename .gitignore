@@ -26,5 +26,3 @@ dist-ssr
 *.sw?
 .codex/
 rdd-temp/
-server/
-admin/
