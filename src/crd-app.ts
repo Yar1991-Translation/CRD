@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { setupDynamicColor } from './theme-utils.js';
+import { inject } from '@vercel/analytics';
 
 import '@material/web/icon/icon.js';
 
@@ -35,6 +36,7 @@ export class CrdApp extends LitElement {
     super.connectedCallback();
     this.activeView = this.resolveViewFromHash(window.location.hash);
     setupDynamicColor();
+    inject();
     window.addEventListener('hashchange', this.handleHashChange);
   }
 
