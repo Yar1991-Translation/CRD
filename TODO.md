@@ -31,3 +31,9 @@
 
 - [ ] 回归检查移动端
 说明：重点确认 Hero、公告卡片、免责声明卡片和 RDD Dialog 在窄屏下的圆角、留白和按钮层级是否仍符合 MD3。
+## Announcement System Progress
+- [x] Refactor `src/components/crd-announcements.ts` to use shared platform cards and tokenized status colors.
+- [x] Add a first-phase `/admin` workspace with login, announcement editing, workflow actions, users, and settings.
+- [x] Add a JSON-backed announcements service scaffold under `server/announcements-service/`.
+- [ ] Deploy `/admin`, `/api/admin/*`, and the upgraded public `/api/announcements` service to `service.forsaken-zh.wiki`.
+- [ ] Polish admin localization, mobile layout, and richer platform metadata fetching.

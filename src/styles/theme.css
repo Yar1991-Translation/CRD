@@ -85,6 +85,15 @@
     color-mix(in srgb, var(--md-sys-color-surface) 89%, var(--md-sys-color-primary));
   --md-sys-color-surface-container-highest:
     color-mix(in srgb, var(--md-sys-color-surface) 84%, var(--md-sys-color-primary));
+
+  --crd-navbar-safe-height: 104px;
+  --crd-navbar-safe-height-mobile: 88px;
+  --crd-status-success-container: #d8f2de;
+  --crd-status-on-success-container: #0f6c35;
+  --crd-status-warning-container: #fff0c2;
+  --crd-status-on-warning-container: #7e5a00;
+  --crd-status-danger-container: #ffd9d7;
+  --crd-status-on-danger-container: #9f241f;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -133,5 +142,11 @@
       color-mix(in srgb, var(--md-sys-color-surface) 86%, var(--md-sys-color-primary));
     --md-sys-color-surface-container-highest:
       color-mix(in srgb, var(--md-sys-color-surface) 81%, var(--md-sys-color-primary));
+    --crd-status-success-container: #204f30;
+    --crd-status-on-success-container: #b5f3c1;
+    --crd-status-warning-container: #5b4708;
+    --crd-status-on-warning-container: #ffe18a;
+    --crd-status-danger-container: #6e2928;
+    --crd-status-on-danger-container: #ffb4ab;
   }
 }

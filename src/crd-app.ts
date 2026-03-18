@@ -1,8 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { setupDynamicColor } from './theme-utils.js';
-import { inject } from '@vercel/analytics';
-import { injectSpeedInsights } from '@vercel/speed-insights';
 
 import '@material/web/icon/icon.js';
 
@@ -23,6 +21,8 @@ export class CrdApp extends LitElement {
 
   private static readonly transitionTotalMs = 560;
 
+  private analyticsInjected = false;
+
   @state()
   private activeView: AppView = 'home';
 
@@ -37,8 +37,7 @@ export class CrdApp extends LitElement {
     super.connectedCallback();
     this.activeView = this.resolveViewFromHash(window.location.hash);
     setupDynamicColor();
-    inject();
-    injectSpeedInsights();
+    void this.injectVercelInsights();
     window.addEventListener('hashchange', this.handleHashChange);
   }
 
@@ -66,6 +65,27 @@ export class CrdApp extends LitElement {
     if (this.transitionCleanupTimer !== null) {
       window.clearTimeout(this.transitionCleanupTimer);
       this.transitionCleanupTimer = null;
+    }
+  }
+
+  private async injectVercelInsights() {
+    if (this.analyticsInjected || !import.meta.env.PROD) {
+      return;
+    }
+
+    this.analyticsInjected = true;
+
+    try {
+      const [{ inject }, { injectSpeedInsights }] = await Promise.all([
+        import('@vercel/analytics'),
+        import('@vercel/speed-insights'),
+      ]);
+
+      inject();
+      injectSpeedInsights();
+    } catch (error) {
+      this.analyticsInjected = false;
+      console.warn('Failed to load Vercel insights integrations.', error);
     }
   }
 

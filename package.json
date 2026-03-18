@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "service:announcements": "node server/announcements-service/server.mjs",
+    "service:announcements:import": "node server/announcements-service/import-public-json.mjs public/announcements.json --replace"
   },
   "dependencies": {
     "@material/material-color-utilities": "^0.4.0",
