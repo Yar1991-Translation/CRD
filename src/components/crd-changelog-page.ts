@@ -779,6 +779,110 @@ export class CrdChangelogPage extends LitElement {
       object-fit: cover;
     }
 
+    .log-renderer .crd-logo-demo {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 16px;
+      min-height: 180px;
+      margin-bottom: 14px;
+      padding: 18px;
+      border-radius: 24px;
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 54%, transparent);
+    }
+
+    .log-renderer .crd-logo-demo--light {
+      color: #14709e;
+      background:
+        radial-gradient(circle at top left, rgba(20, 112, 158, 0.1), transparent 58%),
+        linear-gradient(180deg, rgba(20, 112, 158, 0.08), rgba(20, 112, 158, 0.04));
+    }
+
+    .log-renderer .crd-logo-demo--dark {
+      color: #91cdff;
+      background:
+        radial-gradient(circle at top left, rgba(145, 205, 255, 0.16), transparent 58%),
+        linear-gradient(180deg, rgba(10, 18, 28, 0.92), rgba(20, 33, 48, 0.86));
+      border-color: color-mix(in srgb, #91cdff 26%, rgba(255, 255, 255, 0.1));
+    }
+
+    .log-renderer .crd-logo-demo__surface {
+      display: flex;
+      align-items: center;
+      gap: clamp(16px, 2.6vw, 28px);
+      min-height: 98px;
+      padding: clamp(16px, 2.8vw, 24px);
+      border-radius: 26px;
+      background: color-mix(in srgb, currentColor 12%, rgba(255, 255, 255, 0.48));
+    }
+
+    .log-renderer .crd-logo-demo--dark .crd-logo-demo__surface {
+      background: color-mix(in srgb, currentColor 12%, rgba(255, 255, 255, 0.04));
+    }
+
+    .log-renderer .crd-logo-demo__mark {
+      flex: 0 0 auto;
+      width: clamp(84px, 12vw, 112px);
+      height: clamp(40px, 5vw, 54px);
+      background-color: currentColor;
+      -webkit-mask: url('/assets/brand/CRD.svg') center / contain no-repeat;
+      mask: url('/assets/brand/CRD.svg') center / contain no-repeat;
+    }
+
+    .log-renderer .crd-logo-demo__line {
+      width: min(180px, 42%);
+      height: 14px;
+      border-radius: 999px;
+      background: color-mix(in srgb, currentColor 18%, transparent);
+    }
+
+    .log-renderer .crd-logo-demo__meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--crd-font-small);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.88;
+    }
+
+    .log-renderer .crd-logo-demo__meta::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+
+    .log-renderer .crd-logo-demo__details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      color: color-mix(in srgb, currentColor 74%, var(--md-sys-color-on-surface));
+      font-size: 0.94rem;
+      line-height: 1.6;
+    }
+
+    .log-renderer .crd-logo-demo code {
+      padding: 0.18em 0.5em;
+      border-radius: 10px;
+      background: color-mix(in srgb, currentColor 16%, rgba(255, 255, 255, 0.68));
+      border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+      color: currentColor;
+    }
+
+    .log-renderer .crd-logo-demo--dark .crd-logo-demo__details {
+      color: color-mix(in srgb, currentColor 76%, white);
+    }
+
+    .log-renderer .crd-logo-demo--dark code {
+      background: color-mix(in srgb, currentColor 18%, rgba(255, 255, 255, 0.06));
+      border-color: color-mix(in srgb, currentColor 28%, rgba(255, 255, 255, 0.12));
+      color: currentColor;
+    }
+
     md-dialog.syntax-dialog {
       --md-dialog-container-color: var(--md-sys-color-surface-container-high, var(--md-sys-color-surface));
       --md-dialog-headline-color: var(--md-sys-color-on-surface);

@@ -1,5 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state, query } from 'lit/decorators.js';
+import { renderCrdLogo } from './crd-logo.js';
 
 import '@material/web/button/filled-button.js';
 import '@material/web/button/filled-tonal-button.js';
@@ -150,16 +151,20 @@ export class CrdHero extends LitElement {
     }
 
     h1 {
-      font-family: var(--crd-font-brand);
-      font-optical-sizing: auto;
-      font-size: clamp(3.1rem, 9vw, 5.4rem);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: min(100%, 520px);
       margin: 0;
-      line-height: 0.95;
-      color: var(--md-sys-color-on-background);
-      font-weight: 700;
-      font-style: normal;
-      font-variation-settings: "GRAD" 120;
-      letter-spacing: -0.055em;
+      line-height: 0;
+      color: var(--crd-brand-color);
+    }
+
+    .hero-logo {
+      display: block;
+      width: clamp(240px, 44vw, 420px);
+      height: auto;
+      color: inherit;
     }
 
     .subtitle {
@@ -1513,7 +1518,9 @@ export class CrdHero extends LitElement {
     return html`
       <div class="hero-container">
         <div class="header-text">
-          <h1>CRD.</h1>
+          <h1 aria-label="CRD">
+            ${renderCrdLogo('hero-logo')}
+          </h1>
           <p class="subtitle">专为中国大陆地区提供的 Roblox 客户端安装分流服务。高速、稳定、安全纯净。</p>
 
           <div class="badges-row">

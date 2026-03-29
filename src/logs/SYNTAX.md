@@ -208,14 +208,31 @@ version: 2026.03.17
   </crd-log-doc-card>
 
   <crd-log-doc-card tone="primary" span="2">
-    <crd-log-doc-title>&lt;crd-log-gallery&gt; / &lt;crd-log-shot&gt;</crd-log-doc-title>
+    <crd-log-doc-title>&lt;crd-log-gallery&gt; / &lt;crd-log-shot&gt; / SVG</crd-log-doc-title>
     <crd-log-doc-copy>
-      用于放截图占位、截图说明或正式配图。后续如果你要做带截图的更新日志，这组标签会最顺手。
+      如果项目里已经有正式的品牌资源，优先直接拿真实 SVG 资源做示例展示。像 CRD 现在就是直接复用 <code>/assets/brand/CRD.svg</code>，
+      再配合浅色 / 深色两套容器去展示最终效果。
     </crd-log-doc-copy>
     <crd-log-doc-code>
 &lt;crd-log-gallery&gt;
-  &lt;crd-log-shot caption="首页 Hero 调整后的截图"&gt;&lt;/crd-log-shot&gt;
-  &lt;crd-log-shot caption="公告弹窗截图"&gt;&lt;/crd-log-shot&gt;
+  &lt;crd-log-shot caption="浅色主题下的 CRD.svg 品牌展示"&gt;
+    &lt;div class="crd-logo-demo crd-logo-demo--light"&gt;
+      &lt;div class="crd-logo-demo__surface"&gt;
+        &lt;span class="crd-logo-demo__mark" aria-hidden="true"&gt;&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class="crd-logo-demo__meta"&gt;Light Theme · #14709E&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/crd-log-shot&gt;
+
+  &lt;crd-log-shot caption="深色主题下的 CRD.svg 品牌展示"&gt;
+    &lt;div class="crd-logo-demo crd-logo-demo--dark"&gt;
+      &lt;div class="crd-logo-demo__surface"&gt;
+        &lt;span class="crd-logo-demo__mark" aria-hidden="true"&gt;&lt;/span&gt;
+        &lt;span class="crd-logo-demo__line" aria-hidden="true"&gt;&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class="crd-logo-demo__meta"&gt;Dark Theme · #91CDFF&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/crd-log-shot&gt;
 &lt;/crd-log-gallery&gt;
     </crd-log-doc-code>
   </crd-log-doc-card>

@@ -44,6 +44,9 @@
     sans-serif;
   --crd-font-small: "Google Sans", sans-serif;
   --crd-font-brand: "Google Sans", sans-serif;
+  --crd-brand-color-light: #14709e;
+  --crd-brand-color-dark: #91cdff;
+  --crd-brand-color: var(--crd-brand-color-light);
 
   --md-ref-typeface-plain: var(--crd-font-body);
   --md-ref-typeface-brand: var(--crd-font-body);
@@ -148,5 +151,6 @@
     --crd-status-on-warning-container: #ffe18a;
     --crd-status-danger-container: #6e2928;
     --crd-status-on-danger-container: #ffb4ab;
+    --crd-brand-color: var(--crd-brand-color-dark);
   }
 }

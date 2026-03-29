@@ -26,3 +26,6 @@ dist-ssr
 *.sw?
 .codex/
 rdd-temp/
+PLAN.md
+TODO.md
+*.tsbuildinfo

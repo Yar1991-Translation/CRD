@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
 import { getEffectiveColorScheme, toggleColorScheme } from '../theme-utils.js';
+import { renderCrdLogo } from './crd-logo.js';
 
 import '@material/web/iconbutton/icon-button.js';
 import '@material/web/icon/icon.js';
@@ -51,22 +52,31 @@ export class CrdNavbar extends LitElement {
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-family: var(--crd-font-brand);
-      font-optical-sizing: auto;
-      font-weight: 700;
-      font-size: clamp(1.05rem, 2.8vw, 1.28rem);
-      font-style: normal;
-      font-variation-settings: "GRAD" 120;
-      color: var(--md-sys-color-on-surface);
+      gap: 0;
+      color: var(--crd-brand-color);
       text-decoration: none;
       white-space: nowrap;
-      letter-spacing: -0.02em;
+      line-height: 0;
     }
 
-    .brand img {
-      height: 32px;
-      width: 32px;
+    .brand-logo {
+      display: block;
+      width: clamp(74px, 10vw, 94px);
+      height: auto;
+      color: inherit;
+      flex: none;
+    }
+
+    .brand-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
 
     .actions {
@@ -129,7 +139,8 @@ export class CrdNavbar extends LitElement {
     return html`
       <header>
         <a href=${CrdNavbar.homeUrl} class="brand">
-          CRD.
+          ${renderCrdLogo('brand-logo')}
+          <span class="brand-label">CRD</span>
         </a>
         <div class="actions">
           <md-icon-button
