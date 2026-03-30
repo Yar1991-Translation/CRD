@@ -11,13 +11,60 @@ export const platformDisplayNames: Record<SupportedPlatform, string> = {
   github: 'GitHub',
   youtube: 'YouTube',
   bilibili: 'Bilibili',
+  'qq-channel': 'QQ 频道',
   'roblox-game': 'Roblox Game',
   'roblox-group': 'Roblox Group',
   'roblox-profile': 'Roblox Profile',
   'roblox-devforum': 'Roblox DevForum',
 };
 
+const qqChannelReferencePattern =
+  /(?:QQ\s*(?:频道|頻道)(?:号|號)?|QQ\s*Channel(?:\s*ID)?|频道号|頻道號)\s*[:：#]?\s*([A-Za-z0-9_-]{4,64})/gi;
+
+function normalizeQqChannelReference(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return '';
+  }
+
+  if (/^qq-channel:\/\//i.test(trimmed)) {
+    return trimmed;
+  }
+
+  const explicitMatch = trimmed.match(/^qq-channel\s*[:：]\s*([A-Za-z0-9_-]{4,64})$/i);
+  if (explicitMatch?.[1]) {
+    return `qq-channel://${explicitMatch[1]}`;
+  }
+
+  const labelledMatch = trimmed.match(
+    /^(?:QQ\s*(?:频道|頻道)(?:号|號)?|QQ\s*Channel(?:\s*ID)?|频道号|頻道號)\s*[:：#]?\s*([A-Za-z0-9_-]{4,64})$/i,
+  );
+  if (labelledMatch?.[1]) {
+    return `qq-channel://${labelledMatch[1]}`;
+  }
+
+  if (/^(?=.*\d)[A-Za-z0-9_-]{5,64}$/i.test(trimmed)) {
+    return `qq-channel://${trimmed}`;
+  }
+
+  return '';
+}
+
+function extractQqChannelReferences(value: string) {
+  const matches = [...value.matchAll(qqChannelReferencePattern)];
+  return matches.map((match) => `qq-channel://${match[1]}`);
+}
+
+function buildQqChannelUrl(reference: string) {
+  return /^https?:\/\//i.test(reference) ? reference : `https://pd.qq.com/s/${reference}`;
+}
+
 export function normalizeAnnouncementHref(value: string) {
+  const normalizedQqChannel = normalizeQqChannelReference(value);
+  if (normalizedQqChannel) {
+    return normalizedQqChannel;
+  }
+
   return /^https?:\/\//i.test(value) ? value : `https://${value}`;
 }
 
@@ -26,6 +73,7 @@ export function collectAnnouncementLinks(item: AnnouncementItem) {
     ...(item.links || []),
     ...(item.link ? [item.link] : []),
     ...((item.content.match(announcementLinkPattern) || []) as string[]),
+    ...extractQqChannelReferences(item.content),
   ];
 
   return [...new Set(discovered.map((entry) => normalizeAnnouncementHref(entry)))];
@@ -63,6 +111,10 @@ export function dedupePlatformCards(cards: PlatformCard[]) {
 export function buildFallbackPlatformCard(url: string): PlatformCard | null {
   try {
     const target = new URL(url);
+    if (target.protocol === 'qq-channel:') {
+      return buildQqChannelCard(target);
+    }
+
     const host = target.hostname.replace(/^www\./, '').toLowerCase();
 
     if (host === 'github.com') {
@@ -77,6 +129,10 @@ export function buildFallbackPlatformCard(url: string): PlatformCard | null {
       return buildBilibiliCard(target);
     }
 
+    if (host === 'pd.qq.com' || host === 'qun.qq.com') {
+      return buildQqChannelCard(target);
+    }
+
     if (host.endsWith('roblox.com')) {
       return buildRobloxCard(target);
     }
@@ -89,6 +145,35 @@ export function buildFallbackPlatformCard(url: string): PlatformCard | null {
   }
 
   return null;
+}
+
+function buildQqChannelCard(target: URL): PlatformCard {
+  const isReferenceOnly = target.protocol === 'qq-channel:';
+  const segments = target.pathname.split('/').filter(Boolean);
+  const reference =
+    (isReferenceOnly ? `${target.hostname}${target.pathname}` : '')
+      .replace(/^\/+/, '')
+      .replace(/\/+/g, '/')
+      || target.searchParams.get('channel_id')
+      || target.searchParams.get('guild_id')
+      || target.searchParams.get('inviteCode')
+      || segments[1]
+      || segments[0]
+      || target.hostname;
+
+  const resolvedUrl = isReferenceOnly ? buildQqChannelUrl(reference) : target.toString();
+  const subtitle = reference ? `频道号 ${reference}` : 'QQ 频道链接';
+
+  return {
+    id: `qq-channel-${sanitizeId(reference)}`,
+    url: resolvedUrl,
+    platform: 'qq-channel',
+    entityType: 'channel',
+    title: 'QQ 频道',
+    subtitle,
+    badge: 'Channel',
+    actions: [{ label: '打开频道', url: resolvedUrl }],
+  };
 }
 
 function buildGitHubCard(target: URL): PlatformCard | null {

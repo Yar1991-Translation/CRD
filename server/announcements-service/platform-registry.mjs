@@ -2,6 +2,7 @@ const platformDisplayNames = {
   github: 'GitHub',
   youtube: 'YouTube',
   bilibili: 'Bilibili',
+  'qq-channel': 'QQ 频道',
   'roblox-game': 'Roblox Game',
   'roblox-group': 'Roblox Group',
   'roblox-profile': 'Roblox Profile',
@@ -14,6 +15,19 @@ const requestHeaders = {
 };
 
 function normalizeUrl(value) {
+  if (/^qq-channel:\/\//i.test(value)) {
+    return value;
+  }
+
+  const qqChannelMatch = String(value).trim().match(/^qq-channel\s*[:：]\s*([A-Za-z0-9_-]{4,64})$/i);
+  if (qqChannelMatch?.[1]) {
+    return `qq-channel://${qqChannelMatch[1]}`;
+  }
+
+  if (/^(?=.*\d)[A-Za-z0-9_-]{5,64}$/i.test(String(value).trim())) {
+    return `qq-channel://${String(value).trim()}`;
+  }
+
   return /^https?:\/\//i.test(value) ? value : `https://${value}`;
 }
 
@@ -156,6 +170,10 @@ async function fetchRobloxGroupIcon(groupId) {
 
 async function fetchRobloxGameThumbnail(placeId) {
   return fetchOpenGraphImage(`https://www.roblox.com/games/${placeId}`);
+}
+
+function buildQqChannelUrl(reference) {
+  return /^https?:\/\//i.test(reference) ? reference : `https://pd.qq.com/s/${reference}`;
 }
 
 const githubProvider = {
@@ -428,6 +446,49 @@ const bilibiliProvider = {
   },
 };
 
+const qqChannelProvider = {
+  key: 'qq-channel',
+  match(target) {
+    const host = target.hostname.replace(/^www\./, '').toLowerCase();
+    return target.protocol === 'qq-channel:' || host === 'pd.qq.com' || host === 'qun.qq.com';
+  },
+  parse(target) {
+    const isReferenceOnly = target.protocol === 'qq-channel:';
+    const segments = target.pathname.split('/').filter(Boolean);
+    const reference =
+      (isReferenceOnly ? `${target.hostname}${target.pathname}` : '')
+        .replace(/^\/+/, '')
+        .replace(/\/+/g, '/')
+        || target.searchParams.get('channel_id')
+        || target.searchParams.get('guild_id')
+        || target.searchParams.get('inviteCode')
+        || segments[1]
+        || segments[0]
+        || target.hostname;
+
+    return {
+      url: isReferenceOnly ? buildQqChannelUrl(reference) : target.toString(),
+      platform: 'qq-channel',
+      entityType: 'channel',
+      reference,
+      isReferenceOnly,
+    };
+  },
+  async resolveMeta(parsed) {
+    const thumbnail = parsed.isReferenceOnly ? '' : await fetchOpenGraphImage(parsed.url);
+
+    return {
+      id: `qq-channel-${sanitizeId(parsed.reference)}`,
+      entityType: parsed.entityType,
+      title: 'QQ 频道',
+      subtitle: parsed.reference ? `频道号 ${parsed.reference}` : 'QQ 频道链接',
+      thumbnail,
+      badge: 'Channel',
+      actions: [{ label: '打开频道', url: parsed.url }],
+    };
+  },
+};
+
 const robloxProvider = {
   key: 'roblox',
   match(target) {
@@ -573,6 +634,7 @@ export const platformRegistry = [
   githubProvider,
   youtubeProvider,
   bilibiliProvider,
+  qqChannelProvider,
   devForumProvider,
   robloxProvider,
 ];

@@ -395,6 +395,7 @@ export class CrdAnnouncements extends LitElement {
     .preview-card--github { --preview-accent: #1f6feb; }
     .preview-card--youtube { --preview-accent: #ff0033; }
     .preview-card--bilibili { --preview-accent: #00a1d6; }
+    .preview-card--qq-channel { --preview-accent: #12b7f5; }
     .preview-card--roblox-game,
     .preview-card--roblox-group,
     .preview-card--roblox-profile,
@@ -434,6 +435,65 @@ export class CrdAnnouncements extends LitElement {
       height: 100%;
       object-fit: cover;
       display: block;
+    }
+
+    .preview-thumb--qq-channel {
+      position: relative;
+      flex-direction: column;
+      gap: 2px;
+      border: 1px solid color-mix(
+        in srgb,
+        var(--preview-accent, var(--md-sys-color-primary)) 22%,
+        transparent
+      );
+      background:
+        radial-gradient(
+          circle at top left,
+          color-mix(in srgb, var(--preview-accent, var(--md-sys-color-primary)) 22%, transparent),
+          transparent 54%
+        ),
+        linear-gradient(
+          180deg,
+          color-mix(in srgb, var(--preview-accent, var(--md-sys-color-primary)) 16%, transparent),
+          color-mix(in srgb, var(--preview-accent, var(--md-sys-color-primary)) 8%, transparent)
+        );
+      text-transform: none;
+    }
+
+    .preview-thumb--qq-channel::before {
+      content: '';
+      position: absolute;
+      inset: 5px;
+      border-radius: 11px;
+      border: 1px solid color-mix(
+        in srgb,
+        var(--preview-accent, var(--md-sys-color-primary)) 16%,
+        transparent
+      );
+      opacity: 0.72;
+    }
+
+    .preview-thumb-qq {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .preview-thumb-qq strong {
+      font-size: 0.98rem;
+      font-weight: 800;
+    }
+
+    .preview-thumb-qq span {
+      margin-top: 2px;
+      font-size: 0.48rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      opacity: 0.88;
     }
 
     .preview-copy {
@@ -1001,6 +1061,36 @@ export class CrdAnnouncements extends LitElement {
     return `https://images.weserv.nl/?url=${encodeURIComponent(stripped)}&w=160&h=160&fit=cover`;
   }
 
+  private renderPreviewThumb(card: PlatformCard) {
+    if (card.thumbnail) {
+      return html`
+        <div class="preview-thumb">
+          <img
+            src=${this.normalizeThumbnailUrl(card.thumbnail)}
+            alt=${card.title}
+            loading="lazy"
+            @error=${(event: Event) => this.handleThumbnailError(event, card.thumbnail!)}
+          />
+        </div>
+      `;
+    }
+
+    if (card.platform === 'qq-channel') {
+      return html`
+        <div class="preview-thumb preview-thumb--qq-channel" aria-hidden="true">
+          <div class="preview-thumb-qq">
+            <strong>QQ</strong>
+            <span>频道</span>
+          </div>
+        </div>
+      `;
+    }
+
+    return html`
+      <div class="preview-thumb">${platformDisplayNames[card.platform]}</div>
+    `;
+  }
+
   private handleThumbnailError(event: Event, originalUrl: string) {
     const image = event.currentTarget as HTMLImageElement | null;
     if (!image) {
@@ -1033,18 +1123,7 @@ export class CrdAnnouncements extends LitElement {
         ${visibleCards.map((card) => html`
           <article class="preview-card preview-card--${card.platform}">
             <a class="preview-main" href=${card.url} target="_blank" rel="noopener noreferrer">
-              <div class="preview-thumb">
-                ${card.thumbnail
-                  ? html`
-                      <img
-                        src=${this.normalizeThumbnailUrl(card.thumbnail)}
-                        alt=${card.title}
-                        loading="lazy"
-                        @error=${(event: Event) => this.handleThumbnailError(event, card.thumbnail!)}
-                      />
-                    `
-                  : html`${platformDisplayNames[card.platform]}`}
-              </div>
+              ${this.renderPreviewThumb(card)}
               <div class="preview-copy">
                 <span class="preview-kicker">${card.badge || platformDisplayNames[card.platform]}</span>
                 <strong class="preview-title">${card.title}</strong>

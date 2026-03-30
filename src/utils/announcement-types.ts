@@ -12,6 +12,7 @@ export type SupportedPlatform =
   | 'github'
   | 'youtube'
   | 'bilibili'
+  | 'qq-channel'
   | 'roblox-game'
   | 'roblox-group'
   | 'roblox-profile'

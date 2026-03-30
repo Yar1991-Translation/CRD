@@ -39,6 +39,7 @@ const allPlatforms: SupportedPlatform[] = [
   'github',
   'bilibili',
   'youtube',
+  'qq-channel',
   'roblox-game',
   'roblox-group',
   'roblox-profile',
